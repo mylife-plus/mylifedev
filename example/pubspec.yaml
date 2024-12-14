@@ -14,8 +14,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_dotenv: ^5.0.2
+  flutter_card_swiper: ^2.0.4
+  smooth_page_indicator: ^1.0.0
+  carousel_slider: ^4.2.1
 
+  flutter_dotenv: ^5.0.2
+  pointycastle: ^3.0.6
   mapbox_maps_flutter:
     # When depending on this package from a real application you should use:
     # mapbox_maps_flutter: ^x.y.z
@@ -26,6 +30,7 @@ dependencies:
   font_awesome_flutter: ^10.1.0
   http: ^0.13.5
   path_provider: ^2.1.3
+
 
 dev_dependencies:
   flutter_test:
@@ -53,6 +58,12 @@ flutter:
     - assets/
     - assets/symbols/
     - assets/cluster/
+    - assets/globe_johane.png
+    - assets/book.png
+    - assets/cogwheel.png
+    - assets/earth.png
+    - assets/user.png
+
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 
