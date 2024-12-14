@@ -1,0 +1,152 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
+import 'package:mapbox_maps_example/utils.dart';
+
+import 'example.dart';
+
+class PointAnnotationExample extends StatefulWidget implements Example {
+  @override
+  final Widget leading = const Icon(Icons.map);
+  @override
+  final String title = 'Point Annotations';
+  @override
+  final String? subtitle = null;
+
+  @override
+  State<StatefulWidget> createState() => PointAnnotationExampleState();
+}
+
+class AnnotationClickListener extends OnPointAnnotationClickListener {
+  @override
+  void onPointAnnotationClick(PointAnnotation annotation) {
+    print("onAnnotationClick, id: ${annotation.id}");
+  }
+}
+
+class PointAnnotationExampleState extends State<PointAnnotationExample> {
+  PointAnnotationExampleState();
+
+  MapboxMap? mapboxMap;
+  PointAnnotation? pointAnnotation;
+  PointAnnotationManager? pointAnnotationManager;
+  int styleIndex = 1;
+  _onMapCreated(MapboxMap mapboxMap) {
+    this.mapboxMap = mapboxMap;
+    mapboxMap.setCamera(CameraOptions(
+        center: Point(coordinates: Position(0, 0)), zoom: 1, pitch: 0));
+    mapboxMap.annotations.createPointAnnotationManager().then((value) async {
+      pointAnnotationManager = value;
+      final ByteData bytes =
+          await rootBundle.load('assets/symbols/custom-icon.png');
+      final Uint8List list = bytes.buffer.asUint8List();
+      createOneAnnotation(list);
+      var options = <PointAnnotationOptions>[];
+      for (var i = 0; i < 5; i++) {
+        options.add(
+            PointAnnotationOptions(geometry: createRandomPoint(), image: list));
+      }
+      pointAnnotationManager?.createMulti(options);
+
+      var carOptions = <PointAnnotationOptions>[];
+      for (var i = 0; i < 20; i++) {
+        carOptions.add(PointAnnotationOptions(
+            geometry: createRandomPoint(), iconImage: "car-15"));
+      }
+      pointAnnotationManager?.createMulti(carOptions);
+      pointAnnotationManager
+          ?.addOnPointAnnotationClickListener(AnnotationClickListener());
+    });
+  }
+
+  void createOneAnnotation(Uint8List list) {
+    pointAnnotationManager
+        ?.create(PointAnnotationOptions(
+            geometry: Point(
+                coordinates: Position(
+              0.381457,
+              6.687337,
+            )),
+            textField: "custom-icon",
+            textOffset: [0.0, -2.0],
+            textColor: Colors.red.value,
+            iconSize: 1.3,
+            iconOffset: [0.0, -5.0],
+            symbolSortKey: 10,
+            image: list))
+        .then((value) => pointAnnotation = value);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  // Widget _update() {
+  //   return TextButton(
+  //     child: Text('update a point annotation'),
+  //     onPressed: () {
+  //       if (pointAnnotation != null) {
+  //         var point = pointAnnotation!.geometry;
+  //         var newPoint = Point(
+  //             coordinates: Position(
+  //                 point.coordinates.lng + 1.0, point.coordinates.lat + 1.0));
+  //         pointAnnotation?.geometry = newPoint;
+  //         pointAnnotationManager?.update(pointAnnotation!);
+  //       }
+  //     },
+  //   );
+  // }
+
+  // Widget _create() {
+  //   return TextButton(
+  //       child: Text('create a point annotation'),
+  //       onPressed: () async {
+  //         final ByteData bytes =
+  //             await rootBundle.load('assets/symbols/custom-icon.png');
+  //         final Uint8List list = bytes.buffer.asUint8List();
+  //         createOneAnnotation(list);
+  //       });
+  // }
+
+  // Widget _delete() {
+  //   return TextButton(
+  //     child: Text('delete a point annotation'),
+  //     onPressed: () {
+  //       if (pointAnnotation != null) {
+  //         pointAnnotationManager?.delete(pointAnnotation!);
+  //       }
+  //     },
+  //   );
+  // }
+
+  // Widget _deleteAll() {
+  //   return TextButton(
+  //     child: Text('delete all point annotations'),
+  //     onPressed: () {
+  //       pointAnnotationManager?.deleteAll();
+  //     },
+  //   );
+  // }
+
+  @override
+  Widget build(BuildContext context) {
+    final MapWidget mapWidget =
+    MapWidget(key: ValueKey("mapWidget"), onMapCreated: _onMapCreated);
+
+    return Scaffold(
+      body: Center(
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          child: mapWidget, // Only displaying the map
+        ),
+      ),
+    );
+  }
+}
