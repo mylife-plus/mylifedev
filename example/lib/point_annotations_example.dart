@@ -87,108 +87,66 @@ class PointAnnotationExampleState extends State<PointAnnotationExample> {
     super.dispose();
   }
 
-  Widget _update() {
-    return TextButton(
-      child: Text('update a point annotation'),
-      onPressed: () {
-        if (pointAnnotation != null) {
-          var point = pointAnnotation!.geometry;
-          var newPoint = Point(
-              coordinates: Position(
-                  point.coordinates.lng + 1.0, point.coordinates.lat + 1.0));
-          pointAnnotation?.geometry = newPoint;
-          pointAnnotationManager?.update(pointAnnotation!);
-        }
-      },
-    );
-  }
+  // Widget _update() {
+  //   return TextButton(
+  //     child: Text('update a point annotation'),
+  //     onPressed: () {
+  //       if (pointAnnotation != null) {
+  //         var point = pointAnnotation!.geometry;
+  //         var newPoint = Point(
+  //             coordinates: Position(
+  //                 point.coordinates.lng + 1.0, point.coordinates.lat + 1.0));
+  //         pointAnnotation?.geometry = newPoint;
+  //         pointAnnotationManager?.update(pointAnnotation!);
+  //       }
+  //     },
+  //   );
+  // }
 
-  Widget _create() {
-    return TextButton(
-        child: Text('create a point annotation'),
-        onPressed: () async {
-          final ByteData bytes =
-              await rootBundle.load('assets/symbols/custom-icon.png');
-          final Uint8List list = bytes.buffer.asUint8List();
-          createOneAnnotation(list);
-        });
-  }
+  // Widget _create() {
+  //   return TextButton(
+  //       child: Text('create a point annotation'),
+  //       onPressed: () async {
+  //         final ByteData bytes =
+  //             await rootBundle.load('assets/symbols/custom-icon.png');
+  //         final Uint8List list = bytes.buffer.asUint8List();
+  //         createOneAnnotation(list);
+  //       });
+  // }
 
-  Widget _delete() {
-    return TextButton(
-      child: Text('delete a point annotation'),
-      onPressed: () {
-        if (pointAnnotation != null) {
-          pointAnnotationManager?.delete(pointAnnotation!);
-        }
-      },
-    );
-  }
+  // Widget _delete() {
+  //   return TextButton(
+  //     child: Text('delete a point annotation'),
+  //     onPressed: () {
+  //       if (pointAnnotation != null) {
+  //         pointAnnotationManager?.delete(pointAnnotation!);
+  //       }
+  //     },
+  //   );
+  // }
 
-  Widget _deleteAll() {
-    return TextButton(
-      child: Text('delete all point annotations'),
-      onPressed: () {
-        pointAnnotationManager?.deleteAll();
-      },
-    );
-  }
+  // Widget _deleteAll() {
+  //   return TextButton(
+  //     child: Text('delete all point annotations'),
+  //     onPressed: () {
+  //       pointAnnotationManager?.deleteAll();
+  //     },
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
     final MapWidget mapWidget =
-        MapWidget(key: ValueKey("mapWidget"), onMapCreated: _onMapCreated);
-
-    final List<Widget> listViewChildren = <Widget>[];
-
-    listViewChildren.addAll(
-      <Widget>[_create(), _update(), _delete(), _deleteAll()],
-    );
-
-    final colmn = Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Center(
-          child: SizedBox(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height - 400,
-              child: mapWidget),
-        ),
-        Expanded(
-          child: ListView(
-            children: listViewChildren,
-          ),
-        )
-      ],
-    );
+    MapWidget(key: ValueKey("mapWidget"), onMapCreated: _onMapCreated);
 
     return Scaffold(
-        floatingActionButton: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              FloatingActionButton(
-                  child: Icon(Icons.swap_horiz),
-                  heroTag: null,
-                  onPressed: () {
-                    mapboxMap?.style.setStyleURI(annotationStyles[
-                        ++styleIndex % annotationStyles.length]);
-                  }),
-              SizedBox(height: 10),
-              FloatingActionButton(
-                  child: Icon(Icons.clear),
-                  heroTag: null,
-                  onPressed: () {
-                    if (pointAnnotationManager != null) {
-                      mapboxMap?.annotations
-                          .removeAnnotationManager(pointAnnotationManager!);
-                      pointAnnotationManager = null;
-                    }
-                  }),
-            ],
-          ),
+      body: Center(
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          child: mapWidget, // Only displaying the map
         ),
-        body: colmn);
+      ),
+    );
   }
 }
