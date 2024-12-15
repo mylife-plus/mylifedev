@@ -6,8 +6,10 @@ class MemoryItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 0.463,
+        double screenHeight = MediaQuery.of(context).size.height;
+
+    return Container(
+      height: screenHeight, 
       child: Stack(
         children: [
           PointAnnotationExample(),
@@ -25,32 +27,5 @@ class MemoryItem extends StatelessWidget {
     );
   }
 
-  Widget _buildMemoryCircle(String text, Color color) {
-    return Container(
-      width: 30,
-      height: 30,
-      margin: const EdgeInsets.symmetric(vertical: 4),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: Colors.white, width: 4),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.7),
-            blurRadius: 4,
-          ),
-        ],
-      ),
-      child: Center(
-        child: Text(
-          text,
-          style: const TextStyle(
-            color: Colors.white,
-            fontFamily: 'Kumbh Sans',
-            fontSize: 14,
-          ),
-        ),
-      ),
-    );
-  }
+ 
 }

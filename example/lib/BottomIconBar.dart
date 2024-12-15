@@ -39,7 +39,7 @@ class BottomIconBarState extends State<BottomIconBar> {
     return GestureDetector(
       onTap: () => _onIconTapped(index),
       child: Container(
-        width: 110,
+        width: 80,
         height: 70,
         decoration: BoxDecoration(
           color: isSelected ? Colors.yellow : Colors.transparent,
@@ -47,7 +47,7 @@ class BottomIconBarState extends State<BottomIconBar> {
         child: Center(
           child: Image.asset(
             asset,
-            width: 40, // Icon size
+            width: 50, // Icon size
           ),
         ),
       ),

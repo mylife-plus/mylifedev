@@ -96,10 +96,11 @@ class MemoryContent extends StatelessWidget {
               child: Text(
                 content!,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontSize: 24,
+                  fontSize: 20,
                   fontFamily: 'Kumbh Sans',
                   color: Colors.black,
                 ),
+                textScaleFactor: 1.0,
               ),
             ),
 

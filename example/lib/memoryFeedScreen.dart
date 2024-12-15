@@ -4,7 +4,8 @@ import 'Memory_item.dart';
 import 'Memory_header.dart';
 import 'Memory_content.dart';
 import 'Memory_reactions.dart';
-import 'SearchBarWidget.dart'; // Add import for SearchBarWidget
+import 'SearchBarWidget.dart';
+
 class MemoryFeedScreen extends StatefulWidget {
   const MemoryFeedScreen({Key? key}) : super(key: key);
 
@@ -45,17 +46,21 @@ class MemoryFeedScreenState extends State<MemoryFeedScreen> {
     return Scaffold(
       body: CustomScrollView(
         controller: _scrollController,
+        physics: ClampingScrollPhysics(), // Prevent overscroll
         slivers: [
+          // App Bar
           SliverAppBar(
             backgroundColor: Colors.black,
             floating: true,
             snap: true,
             elevation: 2,
+            automaticallyImplyLeading: false, // Remove back button
             flexibleSpace: const SearchBarWidget(),
           ),
+          // Content List
           SliverList(
             delegate: SliverChildBuilderDelegate(
-                  (context, index) {
+              (context, index) {
                 return Column(
                   children: [
                     MemoryItem(),
@@ -96,7 +101,7 @@ class MemoryFeedScreenState extends State<MemoryFeedScreen> {
                             date: "24/12/2024, 15:30",
                             country: "Country Name",
                             reactions: 3,
-                            content: "i am the test s dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit ametLorem ipsum dolor sit amet Lorem ipsum dolor sit amet",
+                            content: "i am the test dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit ametLorem ipsum dolor sit amet Lorem ipsum dolor sit amet",
                           ),
                         ],
                       ),

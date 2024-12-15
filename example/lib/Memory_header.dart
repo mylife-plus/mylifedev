@@ -14,58 +14,59 @@ class MemoryHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Row(
           children: [
-
-            Icon(Icons.calendar_today, size: 20),
-            const SizedBox(width: 4),
+            Icon(Icons.calendar_today, size: screenWidth * 0.05), 
+            SizedBox(width: screenWidth * 0.01), 
             Text(
               date,
-              style: const TextStyle(
+              style: TextStyle(
                 fontFamily: 'Kumbh Sans',
-                fontSize: 18,
+                fontSize: screenWidth * 0.045, 
                 fontWeight: FontWeight.w500,
                 color: Colors.black,
-                  decoration: TextDecoration.none
-
+                decoration: TextDecoration.none,
               ),
             ),
           ],
         ),
-        const SizedBox(width: 18),
         Row(
           children: [
-            Icon(Icons.location_on, size: 18),
-            const SizedBox(width: 4),
+            Icon(Icons.location_on, size: screenWidth * 0.05),
+            SizedBox(width: screenWidth * 0.01),
             Text(
               country,
-              style: const TextStyle(
+              style: TextStyle(
                 fontFamily: 'Kumbh Sans',
-                fontSize: 18,
+                fontSize: screenWidth * 0.045,
                 fontWeight: FontWeight.w500,
                 color: Colors.black,
-                  decoration: TextDecoration.none
-
+                decoration: TextDecoration.none,
               ),
             ),
           ],
         ),
-        const SizedBox(width: 18),
+
+        // Reactions Section
         Row(
           children: [
-            Icon(Icons.person, size: 20),
-            const SizedBox(width: 4),
+            Icon(Icons.person, size: screenWidth * 0.05),
+            SizedBox(width: screenWidth * 0.01),
             Text(
               reactions.toString(),
-              style: const TextStyle(
+              style: TextStyle(
                 fontFamily: 'Kumbh Sans',
-                fontSize: 18,
+                fontSize: screenWidth * 0.045,
                 fontWeight: FontWeight.w500,
-                color: Colors.black ,
+                color: Colors.black,
               ),
             ),
+            
           ],
         ),
       ],
