@@ -11,13 +11,13 @@ class MemoryContent extends StatelessWidget {
   final List<String>? imageUrls;
 
   const MemoryContent({
-    Key? key,
+    super.key,
     required this.date,
     required this.country,
     required this.reactions,
     this.content,
     this.imageUrls,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -30,10 +30,13 @@ class MemoryContent extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 10),
-          MemoryHeader(
-            date: date,
-            country: country,
-            reactions: reactions,
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: MemoryHeader(
+              date: date,
+              country: country,
+              reactions: reactions,
+            ),
           ),
           const SizedBox(height: 10),
 
@@ -42,7 +45,8 @@ class MemoryContent extends StatelessWidget {
               children: [
                 SizedBox(
                   width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height * 0.5, // Half the screen height
+                  height: MediaQuery.of(context).size.height *
+                      0.5, // Half the screen height
                   child: PageView.builder(
                     controller: pageController,
                     itemCount: imageUrls!.length,
@@ -53,14 +57,15 @@ class MemoryContent extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  FullScreenImageView(imageUrl: imageUrls![index]),
+                              builder: (context) => FullScreenImageView(
+                                  imageUrl: imageUrls![index]),
                             ),
                           );
                         },
                         child: Image.network(
                           imageUrls![index],
-                          fit: BoxFit.cover, // Makes the image fill the width and height
+                          fit: BoxFit
+                              .cover, // Makes the image fill the width and height
                           width: double.infinity,
                           height: double.infinity,
                           errorBuilder: (context, error, stackTrace) =>
@@ -96,10 +101,10 @@ class MemoryContent extends StatelessWidget {
               child: Text(
                 content!,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontSize: 20,
-                  fontFamily: 'Kumbh Sans',
-                  color: Colors.black,
-                ),
+                      fontSize: 20,
+                      fontFamily: 'Kumbh Sans',
+                      color: Colors.black,
+                    ),
                 textScaleFactor: 1.0,
               ),
             ),
@@ -118,7 +123,8 @@ class MemoryContent extends StatelessWidget {
 class FullScreenImageView extends StatelessWidget {
   final String imageUrl;
 
-  const FullScreenImageView({Key? key, required this.imageUrl}) : super(key: key);
+  const FullScreenImageView({Key? key, required this.imageUrl})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -127,7 +133,8 @@ class FullScreenImageView extends StatelessWidget {
       body: GestureDetector(
         onTap: () => Navigator.pop(context),
         child: Center(
-          child: InteractiveViewer( // Allows zooming and panning
+          child: InteractiveViewer(
+            // Allows zooming and panning
             child: Image.network(
               imageUrl,
               fit: BoxFit.contain, // Show the real size of the image

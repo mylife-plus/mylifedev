@@ -19,7 +19,6 @@ class BottomIconBarState extends State<BottomIconBar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 3),
       color: Colors.white,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -39,15 +38,16 @@ class BottomIconBarState extends State<BottomIconBar> {
     return GestureDetector(
       onTap: () => _onIconTapped(index),
       child: Container(
-        width: 80,
-        height: 70,
+        width: MediaQuery.of(context).size.width*.25,
+        height: MediaQuery.of(context).size.height*0.08,
         decoration: BoxDecoration(
           color: isSelected ? Colors.yellow : Colors.transparent,
         ),
         child: Center(
           child: Image.asset(
             asset,
-            width: 50, // Icon size
+            width: 50,
+// Icon size
           ),
         ),
       ),

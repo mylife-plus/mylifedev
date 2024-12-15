@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mapbox_maps_example/point_annotations_example.dart';
 import 'BottomIconBar.dart';
 import 'Memory_item.dart';
 import 'Memory_header.dart';
@@ -44,6 +45,7 @@ class MemoryFeedScreenState extends State<MemoryFeedScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+/*
       body: CustomScrollView(
         controller: _scrollController,
         physics: ClampingScrollPhysics(), // Prevent overscroll
@@ -60,7 +62,7 @@ class MemoryFeedScreenState extends State<MemoryFeedScreen> {
           // Content List
           SliverList(
             delegate: SliverChildBuilderDelegate(
-              (context, index) {
+                  (context, index) {
                 return Column(
                   children: [
                     MemoryItem(),
@@ -114,10 +116,8 @@ class MemoryFeedScreenState extends State<MemoryFeedScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: Visibility(
-        visible: _showBottomBar,
-        child: const BottomIconBar(),
-      ),
+*/
+    body: PointAnnotationExample(),
     );
   }
 }

@@ -14,9 +14,9 @@ void main() {
     final mapboxMap = await mapFuture;
     final gestures = mapboxMap.gestures;
     var settings = GesturesSettings(
-      rotateEnabled: false,
+      rotateEnabled: true,
       pinchToZoomEnabled: true,
-      scrollEnabled: false,
+      scrollEnabled: true,
       simultaneousRotateAndPinchToZoomEnabled: false,
       pitchEnabled: true,
       scrollMode: ScrollMode.HORIZONTAL,

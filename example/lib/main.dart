@@ -92,6 +92,7 @@ void main() {
   MapboxOptions.setAccessToken(MapsDemo.ACCESS_TOKEN);
   runApp(
       MaterialApp(
+        debugShowCheckedModeBanner: false,
           home: LoginPage(),
 
           theme: ThemeData( // Optional: Global theme settings
