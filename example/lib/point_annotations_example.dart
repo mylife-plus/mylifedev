@@ -106,10 +106,10 @@ class PointAnnotationExampleState extends State<PointAnnotationExample> {
   void _setSystemUIOverlayStyle() {
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(
-        statusBarColor: Colors.black, // Status bar background color
-        statusBarIconBrightness: Brightness.light, // Dark icons
+        statusBarColor: Colors.black, 
+        statusBarIconBrightness: Brightness.light, 
         systemNavigationBarColor:
-            Colors.black, // Navigation bar color (Android)
+            Colors.black, 
         systemNavigationBarIconBrightness: Brightness.light,
       ),
     );
@@ -164,14 +164,13 @@ class PointAnnotationExampleState extends State<PointAnnotationExample> {
 
   @override
   Widget build(BuildContext context) {
-    // Ensure status bar remains white when the UI rebuilds
 
     return SafeArea(
       child: Scaffold(
         appBar: _isAppBarVisible
             ? AppBar(
                 backgroundColor: Colors.grey.shade100,
-                elevation: 0, // No shadow
+                elevation: 0, 
                 automaticallyImplyLeading: false,
                 title: Container(
                   height: 30,
@@ -207,18 +206,16 @@ class PointAnnotationExampleState extends State<PointAnnotationExample> {
         body: SafeArea(
           child: Stack(
             children: [
-              // Map widget fills the screen
               Positioned.fill(
                 child: MapWidget(
                   key: ValueKey("mapWidget"),
                   onMapCreated: _onMapCreated,
                 ),
               ),
-              // Draggable bottom sheet
               DraggableScrollableSheet(
-                initialChildSize: 0.08, // Initial height (30% of the screen)
-                minChildSize: 0.08, // Minimum height (20% of the screen)
-                maxChildSize: 1, // Maximum height (80% of the screen)
+                initialChildSize: 0.08, 
+                minChildSize: 0.08, 
+                maxChildSize: 1, 
 
                 builder: (context, scrollController) {
                   Timer? _scrollDebounce;
