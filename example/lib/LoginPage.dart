@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mapbox_maps_example/point_annotations_example.dart';
-import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'dart:math';
 import 'dart:typed_data';
 import 'package:pointycastle/ecc/curves/secp256k1.dart';
@@ -10,11 +8,10 @@ import 'package:pointycastle/ecc/api.dart';
 import 'package:pointycastle/random/fortuna_random.dart';
 import 'package:flutter/services.dart';
 import 'package:pointycastle/api.dart';
-import 'main.dart'; // Import MapsDemo
-import 'memoryFeedScreen.dart';
+import 'memoy_start_screen/memoryFeedScreen.dart';
 class LoginPage extends StatefulWidget {
   @override
-  LoginPageState createState() => LoginPageState(); // Make the state class public
+  LoginPageState createState() => LoginPageState();
 }
 
 class LoginPageState extends State<LoginPage> {

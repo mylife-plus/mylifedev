@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:mapbox_maps_example/point_annotations_example.dart';
-import 'BottomIconBar.dart';
+import '../BottomIconBar.dart';
 import 'Memory_item.dart';
 import 'Memory_header.dart';
 import 'Memory_content.dart';
 import 'Memory_reactions.dart';
-import 'SearchBarWidget.dart';
+import '../SearchBarWidget.dart';
 
 class MemoryFeedScreen extends StatefulWidget {
   const MemoryFeedScreen({Key? key}) : super(key: key);
