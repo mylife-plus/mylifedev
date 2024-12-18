@@ -3,12 +3,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:mapbox_maps_example/memory_crud_screens/addmemoreyscreen.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart' hide Visibility;
 import 'package:mapbox_maps_example/utils.dart';
 
 import 'BottomIconBar.dart';
-import 'Memory_content.dart';
-import 'SearchBarWidget.dart';
+import 'memoy_start_screen/Memory_content.dart';
 import 'example.dart';
 
 class PointAnnotationExample extends StatefulWidget implements Example {
@@ -191,13 +191,22 @@ class PointAnnotationExampleState extends State<PointAnnotationExample> {
                           ),
                         ],
                       ),
-                      Row(
-                        children: [
-                          Icon(Icons.tune, size: 32, color: Colors.grey),
-                          SizedBox(width: 16),
-                          Icon(Icons.add, size: 32, color: Colors.grey),
-                        ],
-                      ),
+                     Row(
+            children: [
+              const Icon(Icons.tune, size: 28, color: Colors.grey),
+              const SizedBox(width: 12),
+              GestureDetector(
+                onTap: () {
+                  // Navigate to MemoryForm
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const MemoryAddScreen()),
+                  );
+                },
+                child: const Icon(Icons.add, size: 28, color: Colors.grey),
+              ),
+            ],
+          ),
                     ],
                   ),
                 ),
