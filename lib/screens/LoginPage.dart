@@ -98,13 +98,8 @@ class LoginPageState extends State<LoginPage> {
                     children: [
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>MemoryFeedScreen(),
-                              ),
-                            );
+                          onPressed: ()=> {
+                            Navigator.of(context).pushReplacementNamed("/memoryFeed")
                           },
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 16.0),
