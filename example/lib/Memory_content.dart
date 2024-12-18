@@ -45,8 +45,7 @@ class MemoryContent extends StatelessWidget {
               children: [
                 SizedBox(
                   width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height *
-                      0.5, // Half the screen height
+                  height: MediaQuery.of(context).size.height *0.5, // Half the screen height
                   child: PageView.builder(
                     controller: pageController,
                     itemCount: imageUrls!.length,

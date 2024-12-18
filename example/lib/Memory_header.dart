@@ -27,7 +27,7 @@ class MemoryHeader extends StatelessWidget {
               date,
               style: TextStyle(
                 fontFamily: 'Kumbh Sans',
-                fontSize: screenWidth * 0.045, 
+                fontSize: screenWidth * 0.040, 
                 fontWeight: FontWeight.w500,
                 color: Colors.black,
                 decoration: TextDecoration.none,
@@ -43,7 +43,7 @@ class MemoryHeader extends StatelessWidget {
               country,
               style: TextStyle(
                 fontFamily: 'Kumbh Sans',
-                fontSize: screenWidth * 0.045,
+                fontSize: screenWidth * 0.04,
                 fontWeight: FontWeight.w500,
                 color: Colors.black,
                 decoration: TextDecoration.none,
@@ -61,7 +61,7 @@ class MemoryHeader extends StatelessWidget {
               reactions.toString(),
               style: TextStyle(
                 fontFamily: 'Kumbh Sans',
-                fontSize: screenWidth * 0.045,
+                fontSize: screenWidth * 0.04,
                 fontWeight: FontWeight.w500,
                 color: Colors.black,
               ),
