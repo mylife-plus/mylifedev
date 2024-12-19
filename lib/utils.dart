@@ -2,11 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
-import 'package:turf/src/polyline.dart';
 
 extension City on Point {
   static var helsinki = Point(coordinates: Position(24.945831, 60.192059));
@@ -108,12 +106,6 @@ extension PolylineCreation on PolylineAnnotationManager {
   }
 }
 
-Future<List<Position>> fetchRouteCoordinates(
-    Position start, Position end, String accessToken) async {
-  final response = await fetchDirectionRoute(start, end, accessToken);
-  Map<String, dynamic> route = jsonDecode(response.body);
-  return Polyline.decode(route['routes'][0]['geometry']);
-}
 
 Future<http.Response> fetchDirectionRoute(
     Position start, Position end, String accessToken) async {

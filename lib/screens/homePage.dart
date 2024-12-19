@@ -1,18 +1,14 @@
-
 import 'dart:async';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mapbox_maps_example/screens/contactsScreen.dart';
-import 'package:mapbox_maps_example/screens/memoryFeedScreen.dart';
 import 'package:mapbox_maps_example/screens/settingsScreen.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
-
 import '../widgets/Memory_content.dart';
-import 'mapScreen.dart';
+import 'contactsScreen.dart';
+import 'memoryFeedScreen.dart';
 
 class Homepage extends ConsumerStatefulWidget {
   const Homepage({super.key});

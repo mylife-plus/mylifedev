@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../repository/dbUtils.dart';
+
 // Base width for scaling (change to match your design specs)
 const double baseWidth = 375.0;
 
@@ -50,6 +52,14 @@ class MemoryForm extends StatefulWidget {
 }
 
 class MemoryFormState extends State<MemoryForm> {
+
+  late AppDatabase appDatabase;
+
+  @override
+  void initState() {
+    super.initState();
+  }                   
+
   DateTime _selectedDate = DateTime.now();
   final List<File> _selectedImages = [];
   final List<String> mockContacts = [
@@ -171,6 +181,8 @@ class MemoryFormState extends State<MemoryForm> {
     });
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     final sizes = ResponsiveSize(context);
@@ -287,13 +299,15 @@ class MemoryFormState extends State<MemoryForm> {
                 color: kPrimaryIconColor,
               ),
               SizedBox(width: 6 * sizes.scaleFactor),
-              Text(
-                'Text & Audio',
-                style: TextStyle(
+              TextButton(onPressed: ()=>{},
+                child: Text(
+                  'Text & Audio',
+                  style: TextStyle(
 
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.w500,
-                  fontSize: sizes.subtitleFontSize,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w500,
+                    fontSize: sizes.subtitleFontSize,
+                  ),
                 ),
               ),
             ],

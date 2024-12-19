@@ -29,7 +29,9 @@ class LoginPageState extends State<LoginPage> {
 
     final generator = ECKeyGenerator()
       ..init(ParametersWithRandom(keyParams, secureRandom));
+
     final keyPair = generator.generateKeyPair();
+
     final privateKey = (keyPair.privateKey as ECPrivateKey).d;
 
     setState(() {
