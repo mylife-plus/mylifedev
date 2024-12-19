@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mapbox_maps_example/screens/LoginPage.dart';
+import 'package:mapbox_maps_example/screens/addMemoryScreen.dart';
 import 'package:mapbox_maps_example/screens/homePage.dart';
 import 'package:mapbox_maps_example/screens/memoryFeedScreen.dart';
 
@@ -46,6 +47,7 @@ class MyLifeApp extends StatelessWidget {
         "/": (BuildContext context) => Homepage(),
         "/login": (BuildContext context) => LoginPage(),
         "/memoryFeed": (BuildContext context) => MemoryFeedScreen(),
+        "/addMemory": (BuildContext context) => MemoryAddScreen(),
 
 
       } ,

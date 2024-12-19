@@ -25,7 +25,7 @@ class _HomepageState extends ConsumerState<Homepage> with SingleTickerProviderSt
   List tabs = [
     'assets/earth.png',
     'assets/book.png',
-    'assets/user.png'
+    'assets/user.png',
     'assets/cogwheel.png',
   ];
 
@@ -71,7 +71,9 @@ appBar: AppBar(
           children: [
             Icon(Icons.tune, size: 32, color: Colors.grey),
             SizedBox(width: 16),
-            Icon(Icons.add, size: 32, color: Colors.grey),
+            IconButton(onPressed: ()=>{
+              Navigator.of(context).pushNamed("/addMemory")
+            },icon: Icon(Icons.add, size: 32, color: Colors.grey)),
           ],
         ),
       ],
