@@ -121,3 +121,8 @@ Future<http.Response> fetchDirectionRoute(
       "$MAPBOX_DIRECTIONS_ENDPOINT${start.lng},${start.lat};${end.lng},${end.lat}?overview=full&access_token=$accessToken");
   return http.get(uri);
 }
+
+
+
+
+
