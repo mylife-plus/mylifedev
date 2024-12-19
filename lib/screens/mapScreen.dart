@@ -18,11 +18,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   Widget build(BuildContext context) {
     return Container(
       
-      child: AbsorbPointer(
-        child: MapWidget(
-onTapListener: (e)=>print(e),
-         
-        ),
+      child: MapWidget(
+
       ),
     );
   }
