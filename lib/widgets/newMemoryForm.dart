@@ -1,9 +1,13 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_sound/flutter_sound.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
-// Base width for scaling (change to match your design specs)
 const double baseWidth = 375.0;
 
 class ResponsiveSize {
@@ -56,14 +60,6 @@ class MemoryFormState extends State<MemoryForm> {
     "Alice Johnson",
     "Alice Smith",
     "Alice Brown",
-    "Alice Brown",
-    "Alice Brown",
-    "Alice Brown",
-    "Alice Brown",
-    "Alice Brown",
-    "Alice Brown",
-    "Alice Brown",
-    "Alice Brown",
     "Bob Smith",
     "Charlie Brown",
     "Diana Prince",
@@ -83,9 +79,10 @@ class MemoryFormState extends State<MemoryForm> {
 
   final List<String> selectedHashtags = [];
   final List<String> selectedContacts = [];
+  final List<bool> _isEditing = [];
 
   bool _isRecording = false;
-  final List<String> _audioMessages = [];
+  final List<Map<String, dynamic>> _audioMessages = [];
 
   void addHashtag(String hashtag) {
     if (!selectedHashtags.contains(hashtag)) {
@@ -113,6 +110,21 @@ class MemoryFormState extends State<MemoryForm> {
     setState(() {
       selectedContacts.remove(contact);
     });
+  }
+  String formatContact(String contact) {
+    List<String> parts = contact.split(' ');
+    if (parts.isNotEmpty) {
+      return parts.length > 1
+          ? '${parts.first} ${parts.last[0]}.'
+          : parts.first;
+    }
+    return contact;
+  }
+
+  String _formatDuration(int seconds) {
+    final minutes = seconds ~/ 60;
+    final remainingSeconds = seconds % 60;
+    return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
   }
 
   Future<void> _pickDateTime() async {
@@ -157,46 +169,496 @@ class MemoryFormState extends State<MemoryForm> {
     });
   }
 
-  void _startRecording() {
-    setState(() {
-      _isRecording = true;
-    });
+
+
+
+  bool _isRecorderInitialized = false;
+  final ValueNotifier<int> _currentDuration = ValueNotifier<int>(0);
+  Timer? _recordingTimer;
+
+  Future<void> checkAndRequestPermissions() async {
+    // Request notification permission
+    if (await Permission.notification.request().isDenied) {
+      print("Notification permission denied");
+    }
+
+    // Request media permissions
+    if (await Permission.audio.request().isDenied) {
+      print("Audio permission denied");
+    }
+    if (await Permission.mediaLibrary.request().isDenied) {
+      print("Media library permission denied");
+    }
   }
 
-  void _stopRecording() {
-    setState(() {
-      _isRecording = false;
-      String newAudioName = 'audio_${DateTime.now().millisecondsSinceEpoch}.mp3';
-      _audioMessages.add(newAudioName);
-    });
+  final FlutterSoundPlayer _player = FlutterSoundPlayer();
+
+  final GlobalKey<AnimatedListState> _animatedListKey = GlobalKey<AnimatedListState>();
+  final GlobalKey _addTextFieldKey = GlobalKey();
+
+  final FlutterSoundRecorder _recorder = FlutterSoundRecorder();
+  String? _currentRecordingPath;
+  @override
+  void initState() {
+    super.initState();
+    checkAndRequestPermissions();
+    _player.openPlayer();
+
+    _initializeRecorder();
+  }
+  Future<void> _initializeRecorder() async {
+    try {
+      final status = await Permission.microphone.status;
+
+      if (status.isGranted) {
+        await _recorder.openRecorder();
+        setState(() {
+          _isRecorderInitialized = true;
+        });
+      } else {
+        final result = await Permission.microphone.request();
+        if (result.isGranted) {
+          await _recorder.openRecorder();
+          setState(() {
+            _isRecorderInitialized = true;
+          });
+        } else {
+          debugPrint("Microphone permission denied");
+        }
+      }
+    } catch (e) {
+      debugPrint("Error initializing recorder: $e");
+    }
+  }
+
+  final ScrollController _scrollController = ScrollController();
+
+
+  @override
+  void dispose() {
+    _currentDuration.dispose();
+    _recordingTimer?.cancel();
+    _playbackTimer?.cancel();
+    _scrollController.dispose();
+
+
+    if (_player.isPlaying) _player.stopPlayer();
+    if (_recorder.isRecording) _recorder.stopRecorder();
+    _recorder.closeRecorder();
+    _player.closePlayer();
+    super.dispose();
+  }
+  int _recordingDuration = 0;
+
+  Future<void> _startRealRecording() async {
+    if (_isRecorderInitialized && !_isRecording) {
+      try {
+        final directory = await getApplicationDocumentsDirectory();
+        final filePath = '${directory.path}/Recording_${DateTime.now().millisecondsSinceEpoch}.aac';
+
+        await _recorder.startRecorder(toFile: filePath);
+
+        setState(() {
+          _isRecording = true;
+          _currentRecordingPath = filePath;
+          _currentDuration.value = 0;
+        });
+
+        // Start the duration timer
+        _recordingTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+          _currentDuration.value++;
+        });
+      } catch (e) {
+        debugPrint("Error starting recorder: $e");
+      }
+    }
+  }
+  Future<void> _stopRealRecording() async {
+    if (_isRecording) {
+      try {
+        final path = await _recorder.stopRecorder();
+        _recordingTimer?.cancel();
+
+        if (path != null) {
+          setState(() {
+            _audioMessages.add({
+              'path': path,
+              'duration': _currentDuration.value,
+              'name': 'Recording ${_audioMessages.length + 1}',
+              'isEditing': false,
+              'isPlaying': false,
+              'currentPosition': 0,
+            });
+            _isRecording = false;
+          });
+
+          _animatedListKey.currentState?.insertItem(_audioMessages.length - 1);
+
+          // Delay the scroll action to make sure the item has been added
+          SchedulerBinding.instance.addPostFrameCallback((_) {
+            Future.delayed(Duration(milliseconds: 100), () {
+              _scrollController.animateTo(
+                _scrollController.position.maxScrollExtent,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeOut,
+              );
+            });
+          });
+        }
+      } catch (e) {
+        debugPrint("Error stopping recorder: $e");
+      }
+    }
+  }
+
+  Timer? _playbackTimer;
+
+  Future<void> _playAudio(int index) async {
+    try {
+      for (var i = 0; i < _audioMessages.length; i++) {
+        if (_audioMessages[i]['isPlaying'] && i != index) {
+          await _player.stopPlayer();
+          _playbackTimer?.cancel();
+          setState(() {
+            _audioMessages[i]['isPlaying'] = false;
+            _audioMessages[i]['currentPosition'] = 0;
+          });
+        }
+      }
+
+      if (_audioMessages[index]['isPlaying']) {
+        await _player.stopPlayer();
+        _playbackTimer?.cancel();
+        setState(() {
+          _audioMessages[index]['isPlaying'] = false;
+          _audioMessages[index]['currentPosition'] = 0;
+        });
+      } else {
+        await _player.startPlayer(
+          fromURI: _audioMessages[index]['path'],
+          codec: Codec.aacADTS,
+          whenFinished: () {
+            print("Playback Finished for Recording ${_audioMessages[index]['name']}");
+
+            _playbackTimer?.cancel();
+            setState(() {
+              _audioMessages[index]['isPlaying'] = false;
+              _audioMessages[index]['currentPosition'] = 0;
+            });
+          },
+        );
+
+        print("Started Playing Recording ${_audioMessages[index]['name']}");
+
+        setState(() {
+          _audioMessages[index]['isPlaying'] = true;
+        });
+
+        _playbackTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+          final currentPosition = _audioMessages[index]['currentPosition'];
+          if (currentPosition < _audioMessages[index]['duration']) {
+            setState(() {
+              _audioMessages[index]['currentPosition']++;
+            });
+            print("Timer Update - Current Position: ${_audioMessages[index]['currentPosition']} seconds");
+          } else {
+            timer.cancel();
+          }
+        });
+      }
+    } catch (e) {
+      print("Error playing audio: $e");
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final sizes = ResponsiveSize(context);
 
-    return SingleChildScrollView(
-      child: Container(
-        margin: EdgeInsets.only(top: 10 * sizes.scaleFactor),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 4 * sizes.scaleFactor,
+    return Container(
+
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 4 * sizes.scaleFactor,
+          ),
+        ],
+      ),
+      child: Column(
+
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              controller: _scrollController,
+              reverse: true,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildDateTimeField(sizes),
+                  _buildLocationField(sizes),
+                  _buildContactField(sizes),
+                  _buildTagField(sizes),
+                  _buildLibraryField(sizes),
+                  _buildTextField(sizes),
+                ].map((child) {
+                  // Reduce space between each section
+                  return Padding(
+                    padding: EdgeInsets.symmetric(vertical: 6.0 * sizes.scaleFactor),
+                    child: child,
+                  );
+                }).toList(),
+              ),
             ),
-          ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTextField(ResponsiveSize sizes) {
+    final double horizontalPadding = 16 * sizes.scaleFactor;
+    final double verticalPadding = 8 * sizes.scaleFactor;
+
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: verticalPadding),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: Colors.grey.shade300, width: 1 * sizes.scaleFactor),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildDateTimeField(sizes),
-            _buildLocationField(sizes),
-            _buildContactField(sizes),
-            _buildTagField(sizes),
-            _buildLibraryField(sizes),
-            _buildTextField(sizes),
-          ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              SvgPicture.asset(
+                'assets/icons/message-text.svg',
+                width: sizes.iconSizeLarge,
+                height: sizes.iconSizeLarge,
+                color: kPrimaryIconColor,
+              ),
+              SizedBox(width: 6 * sizes.scaleFactor),
+              Text(
+                'Text & Audio',
+                style: TextStyle(
+                  color: kHintTextColor,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w500,
+                  fontSize: sizes.subtitleFontSize,
+                ),
+              ),
+            ],
+          ),
+          if (_audioMessages.isNotEmpty)
+            Padding(
+              padding: EdgeInsets.only(top: 8 * sizes.scaleFactor),
+              child: AnimatedList(
+                key: _animatedListKey,
+                controller: _scrollController,  // Attach the scroll controller here
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                initialItemCount: _audioMessages.length,
+                itemBuilder: (context, index, animation) {
+                  final audio = _audioMessages[index];
+                  return SizeTransition(
+                    sizeFactor: animation,
+                    axisAlignment: 1.0,
+                    child: _buildAudioListItem(audio, sizes, index),
+                  );
+                },
+              ),
+            ),
+          SizedBox(height: 8 * sizes.scaleFactor),
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey.shade300, width: 1 * sizes.scaleFactor),
+                    borderRadius: BorderRadius.circular(8 * sizes.scaleFactor),
+                  ),
+                  child: TextField(
+                    maxLines: null,
+                    minLines: 1,
+                    decoration: InputDecoration(
+                      hintText: 'Add Text',
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.symmetric(
+                        vertical: 10 * sizes.scaleFactor,
+                        horizontal: 12 * sizes.scaleFactor,
+                      ),
+                      hintStyle: TextStyle(color: kHintTextColor, fontSize: sizes.bodyFontSize),
+                    ),
+                    style: TextStyle(fontSize: sizes.bodyFontSize),
+                  ),
+                ),
+              ),
+              SizedBox(width: 8 * sizes.scaleFactor),
+              GestureDetector(
+                key: _addTextFieldKey,
+                onTapDown: (_) async {
+                  _currentDuration.value = 0;
+                  await _startRealRecording();
+                },
+                onTapUp: (_) async => await _stopRealRecording(),
+                child: Column(
+                  children: [
+                    Container(
+                      width: 50 * sizes.scaleFactor,
+                      height: 50 * sizes.scaleFactor,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8 * sizes.scaleFactor),
+                        boxShadow: [
+                          if (_isRecording)
+                            BoxShadow(
+                              color: Colors.red.withOpacity(0.6),
+                              blurRadius: 10 * sizes.scaleFactor,
+                              spreadRadius: 2 * sizes.scaleFactor,
+                            ),
+                        ],
+                        border: Border.all(color: Colors.grey.shade300, width: 1 * sizes.scaleFactor),
+                      ),
+                      child: Center(
+                        child: SvgPicture.asset(
+                          'assets/icons/microphone-2.svg',
+                          width: sizes.iconSizeMedium,
+                          height: sizes.iconSizeMedium,
+                          color: _isRecording ? Colors.red : kPrimaryIconColor,
+                        ),
+                      ),
+                    ),
+                    if (_isRecording)
+                      ValueListenableBuilder<int>(
+                        valueListenable: _currentDuration,
+                        builder: (context, duration, _) {
+                          return Text(
+                            _formatDuration(duration),
+                            style: TextStyle(fontSize: sizes.bodyFontSize, color: Colors.red),
+                          );
+                        },
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+
+  Widget _buildAudioListItem(Map<String, dynamic> audio, ResponsiveSize sizes, int index) {
+    final TextEditingController editController = TextEditingController(text: audio['name']);
+    final bool isEditing = audio['isEditing'];
+    final bool isPlaying = audio['isPlaying'];
+
+    return Dismissible(
+      key: Key(audio['path']),
+      direction: DismissDirection.endToStart,
+      background: Container(
+        alignment: Alignment.centerRight,
+        color: Colors.red,
+        child: Padding(
+          padding: EdgeInsets.only(right: 16 * sizes.scaleFactor),
+          child: Icon(Icons.delete, color: Colors.white, size: sizes.iconSizeMedium),
+        ),
+      ),
+      onDismissed: (direction) {
+        final removedAudio = _audioMessages[index];
+        final removedIndex = index;
+        _audioMessages.removeAt(index);
+
+        setState(() {
+          _animatedListKey.currentState?.removeItem(
+            removedIndex,
+                (context, animation) => Container(),
+          );
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${removedAudio['name']} deleted'),
+            action: SnackBarAction(
+              label: 'Undo',
+              onPressed: () {
+                setState(() {
+                  _audioMessages.insert(removedIndex, removedAudio);
+                  _animatedListKey.currentState?.insertItem(removedIndex);
+                });
+              },
+            ),
+          ),
+        );
+      },
+      child: GestureDetector(
+        onLongPress: () {
+          setState(() {
+            _audioMessages[index]['isEditing'] = true;
+          });
+        },
+        child: Container(
+          margin: EdgeInsets.only(bottom: 8 * sizes.scaleFactor),
+          padding: EdgeInsets.all(12 * sizes.scaleFactor),
+          decoration: BoxDecoration(
+            color: Colors.grey.shade200,
+            borderRadius: BorderRadius.circular(8 * sizes.scaleFactor),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: isEditing
+                    ? TextField(
+                  controller: editController,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'Enter audio name',
+                    hintStyle: TextStyle(
+                      color: Colors.grey,
+                      fontSize: sizes.bodyFontSize,
+                    ),
+                  ),
+                  style: TextStyle(fontSize: sizes.bodyFontSize, color: Colors.black),
+                )
+                    : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      audio['name'],
+                      style: TextStyle(fontSize: sizes.bodyFontSize, color: Colors.black),
+                    ),
+                    Text(
+                      '${_formatDuration(audio['currentPosition'])} / ${_formatDuration(audio['duration'])}',
+                      style: TextStyle(fontSize: sizes.bodyFontSize, color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ),
+              IconButton(
+
+                icon: isEditing
+                    ? Icon(Icons.check, color: Colors.green, size: sizes.iconSizeMedium)
+                    : isPlaying
+                    ? Icon(Icons.pause, color: Colors.green, size: sizes.iconSizeMedium)
+                    : Icon(Icons.play_arrow, color: Colors.green, size: sizes.iconSizeMedium),
+
+                onPressed: isEditing
+                    ? () {
+                  setState(() {
+                    _audioMessages[index]['name'] = editController.text.trim().isEmpty
+                        ? audio['name']
+                        : editController.text.trim();
+                    _audioMessages[index]['isEditing'] = false;
+                  });
+                }
+                    : () => _playAudio(index),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -263,191 +725,7 @@ class MemoryFormState extends State<MemoryForm> {
     );
   }
 
-  Widget _buildTextField(ResponsiveSize sizes) {
-    final double horizontalPadding = 16 * sizes.scaleFactor;
-    final double verticalPadding = 8 * sizes.scaleFactor;
 
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: verticalPadding),
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: Colors.grey.shade300, width: 1 * sizes.scaleFactor),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Title Row with SVG
-          Row(
-            children: [
-              SvgPicture.asset(
-                'assets/icons/message-text.svg',
-                width: sizes.iconSizeLarge,
-                height: sizes.iconSizeLarge,
-                color: kPrimaryIconColor,
-              ),
-              SizedBox(width: 6 * sizes.scaleFactor),
-              Text(
-                'Text & Audio',
-                style: TextStyle(
-
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.w500,
-                  fontSize: sizes.subtitleFontSize,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 8 * sizes.scaleFactor),
-
-          // TextField and the hold-to-record button
-          Row(
-            children: [
-              // Expandable TextField
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey.shade300, width: 1 * sizes.scaleFactor),
-                    borderRadius: BorderRadius.circular(8 * sizes.scaleFactor),
-                  ),
-                  child: TextField(
-                    maxLines: null,
-                    minLines: 1,
-                    decoration: InputDecoration(
-                      hintText: 'Add Text',
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.symmetric(
-                        vertical: 10 * sizes.scaleFactor,
-                        horizontal: 12 * sizes.scaleFactor,
-                      ),
-                      hintStyle: TextStyle(color: kHintTextColor, fontSize: sizes.bodyFontSize),
-                    ),
-                    style: TextStyle(fontSize: sizes.bodyFontSize),
-                  ),
-                ),
-              ),
-              SizedBox(width: 8 * sizes.scaleFactor),
-
-              GestureDetector(
-                onTapDown: (_) => _startRecording(),
-                onTapUp: (_) => _stopRecording(),
-                child: Container(
-                  width: 50 * sizes.scaleFactor,
-                  height: 50 * sizes.scaleFactor,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(color: Colors.grey.shade300, width: 1 * sizes.scaleFactor),
-                    borderRadius: BorderRadius.circular(8 * sizes.scaleFactor),
-                  ),
-                  child: Center(
-                    child: SvgPicture.asset(
-                      'assets/icons/microphone-2.svg',
-                      width: sizes.iconSizeMedium,
-                      height: sizes.iconSizeMedium,
-                      color: _isRecording ? Colors.red : kPrimaryIconColor,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-
-          SizedBox(height: 8 * sizes.scaleFactor),
-
-          // Recording State Indicator
-          if (_isRecording)
-            Center(
-              child: Text(
-                'Recording...',
-                style: TextStyle(
-                  color: Colors.red,
-                  fontWeight: FontWeight.bold,
-                  fontSize: sizes.subtitleFontSize,
-                ),
-              ),
-            ),
-
-          SizedBox(height: 8 * sizes.scaleFactor),
-
-          // List of Recorded Audio Messages
-          if (_audioMessages.isNotEmpty)
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Recorded Audios:',
-                  style: TextStyle(
-                    fontSize: sizes.subtitleFontSize,
-                    fontWeight: FontWeight.w500,
-                    color: kSubtitleColor,
-                  ),
-                ),
-                SizedBox(height: 4 * sizes.scaleFactor),
-                Column(
-                  children: _audioMessages.map((audio) {
-                    return Dismissible(
-                      key: Key(audio),
-                      direction: DismissDirection.endToStart,
-                      background: Container(
-                        alignment: Alignment.centerRight,
-                        padding: EdgeInsets.only(right: 20 * sizes.scaleFactor),
-                        color: Colors.red,
-                        child: Icon(
-                          Icons.delete,
-                          color: Colors.white,
-                          size: sizes.iconSizeMedium,
-                        ),
-                      ),
-                      onDismissed: (direction) {
-                        setState(() {
-                          _audioMessages.remove(audio);
-                        });
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('$audio deleted')),
-                        );
-                      },
-                      child: Container(
-                        margin: EdgeInsets.only(bottom: 8 * sizes.scaleFactor),
-                        padding: EdgeInsets.all(12 * sizes.scaleFactor),
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade200,
-                          borderRadius: BorderRadius.circular(8 * sizes.scaleFactor),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                audio,
-                                style: TextStyle(
-                                  fontSize: sizes.bodyFontSize,
-                                  color: kSubtitleColor,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            IconButton(
-                              icon: Icon(Icons.play_arrow, color: Colors.green, size: sizes.iconSizeMedium),
-                              onPressed: () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Playing $audio')),
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                ),
-              ],
-            ),
-        ],
-      ),
-    );
-  }
-
-  /// Updated buildSection to accept SVGs for icons
   Widget _buildSection({
     required ResponsiveSize sizes,
     required String iconSvg,
@@ -633,7 +911,6 @@ class MemoryFormState extends State<MemoryForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header Row
           Row(
             children: [
               leadingIcon,
@@ -641,7 +918,7 @@ class MemoryFormState extends State<MemoryForm> {
               Text(
                 title,
                 style: TextStyle(
-                  color: kTitleColor,
+                  color: kHintTextColor,
                   fontSize: sizes.subtitleFontSize,
                   fontWeight: FontWeight.w400,
                 ),
@@ -851,7 +1128,7 @@ class MemoryFormState extends State<MemoryForm> {
                     children: selectedItems.map((item) {
                       return Chip(
                         backgroundColor: Colors.white,
-                        label: Text(item, style: TextStyle(color: Colors.black, fontSize: sizes.bodyFontSize)),
+                        label: Text(formatContact(item), style: TextStyle(color: Colors.black, fontSize: sizes.bodyFontSize)),
                         deleteIcon: Icon(Icons.close, color: Colors.red, size: sizes.iconSizeSmall),
                         onDeleted: () {
                           onRemoveItem(item);
@@ -859,6 +1136,7 @@ class MemoryFormState extends State<MemoryForm> {
                         },
                       );
                     }).toList(),
+
                   ),
                 ),
               ],

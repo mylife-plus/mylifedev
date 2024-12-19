@@ -34,51 +34,48 @@ class HeaderSection extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: rs.paddingHorizontal,
-        vertical: rs.paddingVertical,
+        vertical: rs.scale(10.0), // Adjusted padding
       ),
+      margin: EdgeInsets.zero,
       decoration: const BoxDecoration(
-        color: Color(0xFFFFF2C5),
+        color: Color(0xFFFFF2C5), // Ensure consistent yellow background
       ),
-      child: SizedBox(
-        height: rs.iconSizeLarge,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // Left Icon
-            Icon(Icons.close, size: rs.iconSizeMedium, color: Colors.red),
-            const Spacer(),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // Left Icon
+          Icon(Icons.close, size: rs.iconSizeMedium, color: Colors.black), // Changed to black
+          const Spacer(),
 
-            // Center Content
-            Center(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    'assets/book.png',
-                    width: rs.iconSizeLarge,
-                    height: rs.iconSizeLarge,
-                    fit: BoxFit.fill,
-                  ),
-                  SizedBox(width: rs.scale(8.0)),
-                  Text(
-                    'New Memory',
-                    style: TextStyle(
-                      fontSize: rs.titleFontSize,
-                      fontFamily: 'Kumbh Sans',
-                      color: kTitleColor,
-                    ),
-                  ),
-                ],
+          // Center Content
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Image.asset(
+                'assets/book.png',
+                width: rs.iconSizeLarge,
+                height: rs.iconSizeLarge,
+                fit: BoxFit.fill,
               ),
-            ),
-            const Spacer(),
+              SizedBox(width: rs.scale(8.0)),
+              Text(
+                'New Memory',
+                style: TextStyle(
+                  fontSize: rs.titleFontSize,
+                  fontFamily: 'Kumbh Sans',
+                  color: kTitleColor,
+                ),
+              ),
+            ],
+          ),
+          const Spacer(),
 
-            // Right Icon
-            Icon(Icons.check, size: rs.iconSizeMedium, color: Colors.green),
-          ],
-        ),
+          // Right Icon
+          Icon(Icons.check, size: rs.iconSizeMedium, color: Colors.green),
+        ],
       ),
     );
+
   }
 }
