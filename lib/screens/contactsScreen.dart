@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mapbox_maps_example/widgets/contactScreen/Contact_list.dart';
 
+class ContactsScreen extends StatelessWidget {
+  const ContactsScreen({Key? key}) : super(key: key);
 
-class ContactsScreen extends ConsumerStatefulWidget {
-  const ContactsScreen({super.key});
-
-  @override
-  ConsumerState createState() => _ContactsScreenState();
-}
-
-class _ContactsScreenState extends ConsumerState<ContactsScreen> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.red,
+    return Scaffold(
+      backgroundColor: const Color(0xFFFFF3D0),
+      body: const SafeArea(
+        child: ContactList(), // No need for onContactTap here
+      ),
     );
   }
 }

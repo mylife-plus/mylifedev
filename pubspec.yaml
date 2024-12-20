@@ -73,7 +73,9 @@ flutter:
     - assets/icons/microphone-2.svg
     - assets/icons/user.svg
     - assets/icons/location.svg
+    - assets/icons/share.png
 
+    - assets/dagobert.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 
