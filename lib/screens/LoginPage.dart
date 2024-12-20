@@ -11,7 +11,7 @@ import 'package:pointycastle/api.dart';
 import 'memoryFeedScreen.dart';
 class LoginPage extends StatefulWidget {
   @override
-  LoginPageState createState() => LoginPageState(); // Make the state class public
+  LoginPageState createState() => LoginPageState();
 }
 
 class LoginPageState extends State<LoginPage> {
