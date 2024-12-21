@@ -12,23 +12,25 @@ class MemoryAddScreen extends StatelessWidget {
         backgroundColor: Colors.amber,
         elevation: 0, // No shadow
         automaticallyImplyLeading: false,
+        toolbarHeight: 17,
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Container(
             color: Colors.amber,
-            padding: EdgeInsets.zero,
             child: const HeaderSection(),
           ),
           Expanded(
-            child: Container(
-              color: const Color(0xFFFFF2C5),
-              child: MemoryForm(),
+            child: Padding(
+              padding: const EdgeInsets.only(top: 20.0), // Apply padding only to the
+
+              child: MemoryForm(), // MemoryForm will now expand and take remaining space
             ),
           ),
         ],
       ),
-      backgroundColor: Colors.grey.shade100,
+      backgroundColor: Colors.amber,
     );
   }
 }
