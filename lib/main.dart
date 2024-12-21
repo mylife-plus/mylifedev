@@ -4,7 +4,6 @@ import 'package:mapbox_maps_example/screens/LoginPage.dart';
 import 'package:mapbox_maps_example/screens/addMemoryScreen.dart';
 import 'package:mapbox_maps_example/screens/homePage.dart';
 import 'package:mapbox_maps_example/screens/memoryFeedScreen.dart';
-
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 
 void main() {

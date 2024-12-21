@@ -8,6 +8,9 @@ import 'package:flutter_sound/flutter_sound.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../repository/dbUtils.dart';
+
+
 const double baseWidth = 375.0;
 
 class ResponsiveSize {
@@ -54,6 +57,14 @@ class MemoryForm extends StatefulWidget {
 }
 
 class MemoryFormState extends State<MemoryForm> {
+
+  late AppDatabase appDatabase;
+
+  @override
+  void initState() {
+    super.initState();
+  }                   
+
   DateTime _selectedDate = DateTime.now();
   final List<File> _selectedImages = [];
   final List<String> mockContacts = [
@@ -191,6 +202,7 @@ class MemoryFormState extends State<MemoryForm> {
     }
   }
 
+
   final FlutterSoundPlayer _player = FlutterSoundPlayer();
 
   final GlobalKey<AnimatedListState> _animatedListKey = GlobalKey<AnimatedListState>();
@@ -198,6 +210,7 @@ class MemoryFormState extends State<MemoryForm> {
 
   final FlutterSoundRecorder _recorder = FlutterSoundRecorder();
   String? _currentRecordingPath;
+
   @override
   void initState() {
     super.initState();
@@ -440,6 +453,7 @@ class MemoryFormState extends State<MemoryForm> {
                 color: kPrimaryIconColor,
               ),
               SizedBox(width: 6 * sizes.scaleFactor),
+
               Text(
                 'Text & Audio',
                 style: TextStyle(
