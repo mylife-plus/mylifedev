@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mapbox_maps_example/screens/settingsScreen.dart';
+import 'package:mapbox_maps_example/screens/testScreen.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import '../widgets/Memory_content.dart';
 import 'contactsScreen.dart';
@@ -97,7 +98,8 @@ appBar: AppBar(
               ],
             )),),
           MemoryFeedScreen(),
-            ContactsScreen(),
+TestScreen(),
+
             SettingsScreen(),
 
       ]
