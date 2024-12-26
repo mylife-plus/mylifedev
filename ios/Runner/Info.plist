@@ -4,6 +4,8 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>MBXAccessToken</key>
+	<string>sk.eyJ1Ijoib3V0YnVyc3Q5OSIsImEiOiJjbTR1ZWM0eXMwa3ZlMnBzZzU3MHFwa3hrIn0.q6hXu5HhQv_ZKEdXhvMbJQ</string>
 	<key>CFBundleDisplayName</key>
 	<string>Mylifey</string>
 	<key>CFBundleExecutable</key>
