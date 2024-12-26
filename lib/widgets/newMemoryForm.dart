@@ -60,11 +60,7 @@ class MemoryFormState extends State<MemoryForm> {
 
   late AppDatabase appDatabase;
 
-  @override
-  void initState() {
-    super.initState();
-  }                   
-
+  
   DateTime _selectedDate = DateTime.now();
   final List<File> _selectedImages = [];
   final List<String> mockContacts = [
