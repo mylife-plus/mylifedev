@@ -1,14 +1,12 @@
-import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mapbox_maps_example/screens/settingsScreen.dart';
 import 'package:mapbox_maps_example/screens/testScreen.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
-import '../widgets/Memory_content.dart';
-import 'contactsScreen.dart';
 import 'memoryFeedScreen.dart';
 
 class Homepage extends ConsumerStatefulWidget {
@@ -20,8 +18,11 @@ class Homepage extends ConsumerStatefulWidget {
 
 class _HomepageState extends ConsumerState<Homepage> with SingleTickerProviderStateMixin {
 
+
   ScrollController controller = ScrollController();
   ScrollController mapScrollController = ScrollController();
+
+  late PointAnnotationManager pointAnnotationManager;
 
   List tabs = [
     'assets/earth.png',
@@ -85,18 +86,23 @@ appBar: AppBar(
         physics:NeverScrollableScrollPhysics(),
           controller: _tabController,
           children: [
-            LayoutBuilder( builder:(BuildContext, constraints)=> SizedBox(width:constraints.maxWidth,height: constraints.maxHeight,child: Stack(
-              children: [
-                MapWidget(onMapCreated: (mapbox)=>{map=mapbox}, gestureRecognizers: {
-                Factory<OneSequenceGestureRecognizer>(
-                () => EagerGestureRecognizer(),
-                ),
-                },),
-
-
-
-              ],
-            )),),
+            Container(
+              key: PageStorageKey('map'),
+              child: LayoutBuilder( builder:(BuildContext, constraints)=> SizedBox(width:constraints.maxWidth,height: constraints.maxHeight,child: Stack(
+                children: [
+                  MapWidget(
+                    
+                    onMapCreated: _onMapCreated, gestureRecognizers: {
+                  Factory<OneSequenceGestureRecognizer>(
+                  () => EagerGestureRecognizer(),
+                  ),
+                  },),
+              
+              
+              
+                ],
+              )),),
+            ),
           MemoryFeedScreen(),
 TestScreen(),
 
@@ -121,5 +127,43 @@ TestScreen(),
       ),
 
     );
+  }
+
+
+  _onMapCreated(MapboxMap mapbox) async {
+    this.map = mapbox;
+    pointAnnotationManager =
+    await map.annotations.createPointAnnotationManager();
+
+    // Load the image from assets
+    final ByteData bytes =
+    await rootBundle.load('assets/book.png');
+    final Uint8List imageData = bytes.buffer.asUint8List();
+
+    // Create a PointAnnotationOptions
+    PointAnnotationOptions pointAnnotationOptions = PointAnnotationOptions(
+        geometry: Point(coordinates: Position(-74.00913, 40.75183)), // Example coordinates
+        image: imageData,
+        iconSize: 0.2
+    );
+
+    // Add the annotation to the map
+    final PointAnnotation annotation = await pointAnnotationManager.create(pointAnnotationOptions);
+
+    pointAnnotationManager.addOnPointAnnotationClickListener(MarkerClickListener(onClick: (e){print('hello');}));
+
+  }
+
+}
+
+
+class MarkerClickListener implements OnPointAnnotationClickListener {
+  final Function(PointAnnotation) onClick;
+
+  MarkerClickListener({required this.onClick});
+
+  @override
+  void onPointAnnotationClick(PointAnnotation annotation) {
+    onClick(annotation);
   }
 }
