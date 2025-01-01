@@ -8,7 +8,6 @@ import 'package:pointycastle/ecc/api.dart';
 import 'package:pointycastle/random/fortuna_random.dart';
 import 'package:flutter/services.dart';
 import 'package:pointycastle/api.dart';
-import 'memoryFeedScreen.dart';
 class LoginPage extends StatefulWidget {
   @override
   LoginPageState createState() => LoginPageState();
