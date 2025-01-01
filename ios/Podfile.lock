@@ -1,35 +1,48 @@
 PODS:
   - Flutter (1.0.0)
+  - flutter_sound (9.17.8):
+    - Flutter
+    - flutter_sound_core (= 9.17.8)
+  - flutter_sound_core (9.17.8)
+  - image_picker_ios (0.0.1):
+    - Flutter
   - integration_test (0.0.1):
     - Flutter
-  - mapbox_maps_flutter (2.5.0-beta.1):
+  - mapbox_maps_flutter (2.5.0):
     - Flutter
-    - MapboxMaps (~> 11.9.0-beta.1)
-    - Turf (= 4.0.0-beta.1)
-  - MapboxCommon (24.9.0-beta.1):
-    - Turf (= 4.0.0-beta.1)
-  - MapboxCoreMaps (11.9.0-beta.1):
-    - MapboxCommon (~> 24.9.0-beta)
-  - MapboxMaps (11.9.0-beta.1):
-    - MapboxCommon (= 24.9.0-beta.1)
-    - MapboxCoreMaps (= 11.9.0-beta.1)
-    - Turf (= 4.0.0-beta.1)
+    - MapboxMaps (~> 11.9.0)
+    - Turf (= 4.0.0)
+  - MapboxCommon (24.9.0):
+    - Turf (= 4.0.0)
+  - MapboxCoreMaps (11.9.0):
+    - MapboxCommon (~> 24.9)
+  - MapboxMaps (11.9.0):
+    - MapboxCommon (= 24.9.0)
+    - MapboxCoreMaps (= 11.9.0)
+    - Turf (= 4.0.0)
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
   - permission_handler_apple (9.1.1):
     - Flutter
-  - Turf (4.0.0-beta.1)
+  - sqflite_darwin (0.0.4):
+    - Flutter
+    - FlutterMacOS
+  - Turf (4.0.0)
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
+  - flutter_sound (from `.symlinks/plugins/flutter_sound/ios`)
+  - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - integration_test (from `.symlinks/plugins/integration_test/ios`)
   - mapbox_maps_flutter (from `.symlinks/plugins/mapbox_maps_flutter/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
+  - sqflite_darwin (from `.symlinks/plugins/sqflite_darwin/darwin`)
 
 SPEC REPOS:
   trunk:
+    - flutter_sound_core
     - MapboxCommon
     - MapboxCoreMaps
     - MapboxMaps
@@ -38,6 +51,10 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
+  flutter_sound:
+    :path: ".symlinks/plugins/flutter_sound/ios"
+  image_picker_ios:
+    :path: ".symlinks/plugins/image_picker_ios/ios"
   integration_test:
     :path: ".symlinks/plugins/integration_test/ios"
   mapbox_maps_flutter:
@@ -46,18 +63,24 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
   permission_handler_apple:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
+  sqflite_darwin:
+    :path: ".symlinks/plugins/sqflite_darwin/darwin"
 
 SPEC CHECKSUMS:
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  flutter_sound: 7c797c81917a962510b0d187a3323ae78efbf5eb
+  flutter_sound_core: d530b4031479967b66d37cab067547739f1e1910
+  image_picker_ios: c560581cceedb403a6ff17f2f816d7fea1421fc1
   integration_test: 252f60fa39af5e17c3aa9899d35d908a0721b573
-  mapbox_maps_flutter: 0a7ec31e0bd2c6036814e8e4b60f4f1339509730
-  MapboxCommon: 0b383667ab2f9225f370ecc80cbb05f6708b79a4
-  MapboxCoreMaps: 198e32a078b274e6d82f2f24700b2860a280f8e6
-  MapboxMaps: 3bd42eafda66dcbf3ff886c4b0b8af5dc9df9604
+  mapbox_maps_flutter: d51b6d48ba9d8231a77269f1743ec175099d7b15
+  MapboxCommon: 678bfc4b477a804244fd7323c79cc7f2402f844e
+  MapboxCoreMaps: 5cd77c7251dea10903135e8427c788212bd26346
+  MapboxMaps: 2ce57c4ec89d8f05eacfebdd39b01216e0c06168
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   permission_handler_apple: e76247795d700c14ea09e3a2d8855d41ee80a2e6
-  Turf: ce90b58ad96b4f71cf03b1ba80f71753ee586932
+  sqflite_darwin: 5a7236e3b501866c1c9befc6771dfd73ffb8702d
+  Turf: c9eb11a65d96af58cac523460fd40fec5061b081
 
-PODFILE CHECKSUM: e9395e37b54f3250ebce302f8de7800b2ba2b828
+PODFILE CHECKSUM: 819463e6a0290f5a72f145ba7cde16e8b6ef0796
 
 COCOAPODS: 1.16.2

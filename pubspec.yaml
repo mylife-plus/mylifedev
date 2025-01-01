@@ -44,7 +44,6 @@ dev_dependencies:
   integration_test:
     sdk: flutter
   riverpod_generator: ^2.6.3
-  turf: ^0.0.7
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
