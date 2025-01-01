@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mapbox_maps_example/widgets/contactScreen/Contact_list.dart';
 
 import '../models/contact.dart';
 
@@ -14,21 +13,19 @@ class ContactsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final Map<String, List<Contact>> mockContacts = Contact.contactsListToMap();
     return Container(
-      child: Expanded(
-        child: ListView(
+      child: ListView(
 
-          children: [
-            ...mockContacts.keys.map((e) {
-              return ListView(
-                shrinkWrap: true,
-                physics: ClampingScrollPhysics(),
-                children: [
-                  ...mockContacts[e]!.map((element)=>Text(element.homeAddress))
-              ],
-              );
-            })
-          ],
-        )
+        children: [
+          ...mockContacts.keys.map((e) {
+            return ListView(
+              shrinkWrap: true,
+              physics: ClampingScrollPhysics(),
+              children: [
+                ...mockContacts[e]!.map((element)=>Text(element.homeAddress))
+            ],
+            );
+          })
+        ],
       ),
     );
   }
