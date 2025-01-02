@@ -118,6 +118,7 @@ class MemoryFormState extends State<MemoryForm> {
       selectedContacts.remove(contact);
     });
   }
+
   String formatContact(String contact) {
     List<String> parts = contact.split(' ');
     if (parts.isNotEmpty) {
@@ -1204,5 +1205,4 @@ class MemoryFormState extends State<MemoryForm> {
       ),
     );
   }
-
 }

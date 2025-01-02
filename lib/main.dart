@@ -12,7 +12,8 @@ void main() {
 
   WidgetsFlutterBinding.ensureInitialized();
 
-  MapboxOptions.setAccessToken(ACCESS_TOKEN);
+  MapboxOptions.setAccessToken("sk.eyJ1Ijoib3V0YnVyc3Q5OSIsImEiOiJjbTR1ZWM0eXMwa3ZlMnBzZzU3MHFwa3hrIn0.q6hXu5HhQv_ZKEdXhvMbJQ");
+
 
   runApp(
     ProviderScope(child: MyLifeApp()));
@@ -52,7 +53,10 @@ class MyLifeApp extends StatelessWidget {
 
       } ,
         theme: ThemeData(
-        appBarTheme: AppBarTheme(
+          bottomSheetTheme: BottomSheetThemeData(
+              backgroundColor: Colors.black.withOpacity(0.5)),
+
+          appBarTheme: AppBarTheme(
         elevation: 0,
     ),
     ));
