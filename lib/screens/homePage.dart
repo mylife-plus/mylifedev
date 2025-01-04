@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mapbox_maps_example/screens/contactsScreen.dart';
 import 'package:mapbox_maps_example/screens/settingsScreen.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
+import '../widgets/memoryScreen/newMemoryWidget.dart';
 import 'memoryFeedScreen.dart';
 
 class Homepage extends ConsumerStatefulWidget {
@@ -35,7 +36,6 @@ class _HomepageState extends ConsumerState<Homepage>
   @override
   void initState() {
     _tabController = TabController(length: 4, vsync: this);
-
     super.initState();
   }
 
@@ -43,7 +43,6 @@ class _HomepageState extends ConsumerState<Homepage>
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
-
         body: TabBarView(
             physics: _tabController.index==0?NeverScrollableScrollPhysics():AlwaysScrollableScrollPhysics(),
             controller: _tabController,
@@ -55,6 +54,7 @@ class _HomepageState extends ConsumerState<Homepage>
                     child: Stack(
                       children: [
                         MapWidget(
+
                           onMapCreated: (mapbox) => {map = mapbox},
                           gestureRecognizers: {
                             Factory<OneSequenceGestureRecognizer>(
@@ -74,9 +74,23 @@ class _HomepageState extends ConsumerState<Homepage>
           elevation: 1,
           onPressed: () {
 
-         showModalBottomSheet(context: context, builder: (BuildContext alternativeContext){
-              return AddMemorySheet();
+         showModalBottomSheet(context: context,anchorPoint: Offset(0, 0), isScrollControlled: true, showDragHandle: true, builder: (BuildContext alternativeContext){
+           return Wrap(
+               children: <Widget>[
+                 Container(
+                   child: Container(
+                     decoration: new BoxDecoration(
+                         color:  Colors.white,
+                         border: Border(top: BorderSide(color: Colors.white,width: 3)),
+                       ),
+                     child: NewMemoryWidget(),
+                   ),
+                 )
+               ]
+           );
             });
+         
+
 
 
             setState(() {
@@ -95,6 +109,7 @@ class _HomepageState extends ConsumerState<Homepage>
         ),
         floatingActionButtonLocation:
         FloatingActionButtonLocation.miniCenterDocked,
+
         bottomNavigationBar: AnimatedBottomNavigationBar.builder(
           elevation: 0,
           notchSmoothness: NotchSmoothness.verySmoothEdge,
@@ -141,32 +156,6 @@ class _HomepageState extends ConsumerState<Homepage>
         // ])
 
         );
-  }
-}
-
-
-
-class AddMemorySheet extends StatefulWidget {
-  const AddMemorySheet({super.key});
-
-  @override
-  State<AddMemorySheet> createState() => _AddMemorySheetState();
-}
-
-class _AddMemorySheetState extends State<AddMemorySheet> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(height: 800, child: Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        SizedBox(height: 80, child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            ElevatedButton(onPressed: null, child: Text("Some Text")), ElevatedButton(onPressed: null, child: Text("Some Text", style: TextStyle(color: Colors.black),))
-          ],
-        ),)
-      ],
-    ),);
   }
 }
 
