@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:interactive_bottom_sheet/interactive_bottom_sheet.dart';
 import 'package:mapbox_maps_example/screens/contactsScreen.dart';
 import 'package:mapbox_maps_example/screens/settingsScreen.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
@@ -32,16 +33,19 @@ class _HomepageState extends ConsumerState<Homepage>
   bool modalOpened = false;
   late TabController _tabController;
   late MapboxMap map;
-  late PersistentBottomSheetController sheetController;
+  late DraggableScrollableController sheetController;
   @override
   void initState() {
     _tabController = TabController(length: 4, vsync: this);
+    sheetController= DraggableScrollableController();
     super.initState();
   }
-
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
+  final GlobalKey sheetKey = GlobalKey();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldKey,
       extendBody: true,
         body: TabBarView(
             physics: _tabController.index==0?NeverScrollableScrollPhysics():AlwaysScrollableScrollPhysics(),
@@ -69,43 +73,20 @@ class _HomepageState extends ConsumerState<Homepage>
               ContactsScreen(),
               SettingsScreen(),
             ]),
+        bottomSheet: InteractiveBottomSheet(controller: sheetController, options: InteractiveBottomSheetOptions(initialSize: 0.2, minimumSize: 0.1,maxSize: 0.9) , child: NewMemoryWidget(),),
         floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.transparent,
           elevation: 1,
-          onPressed: () {
-
-         showModalBottomSheet(context: context,anchorPoint: Offset(0, 0), isScrollControlled: true, showDragHandle: true, builder: (BuildContext alternativeContext){
-           return Wrap(
-               children: <Widget>[
-                 Container(
-                   child: Container(
-                     decoration: new BoxDecoration(
-                         color:  Colors.white,
-                         border: Border(top: BorderSide(color: Colors.white,width: 3)),
-                       ),
-                     child: NewMemoryWidget(),
-                   ),
-                 )
-               ]
-           );
-            });
-         
-
-
-
-            setState(() {
-              modalOpened=true;
-            });
-
-          },
-          child: Icon(
+                  child: Icon(
             Icons.add,
             color: Colors.white,
             weight: 18,
           ),
           shape: CircleBorder(
             side: BorderSide(color: Colors.white, width: 2),
-          ),
+          ), onPressed: () {
+          sheetController.jumpTo(0.7);
+        },
         ),
         floatingActionButtonLocation:
         FloatingActionButtonLocation.miniCenterDocked,
