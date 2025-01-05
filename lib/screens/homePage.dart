@@ -78,10 +78,12 @@ class _HomepageState extends ConsumerState<Homepage>
           backgroundColor: Colors.transparent,
           elevation: 1,
                   child: Icon(
-            Icons.add,
-            color: Colors.white,
-            weight: 18,
-          ),
+
+                    Icons.add,
+                    color: Colors.white,
+                    weight: 18,
+
+                  ),
           shape: CircleBorder(
             side: BorderSide(color: Colors.white, width: 2),
           ), onPressed: () {
