@@ -9,6 +9,9 @@ part 'newMemoryWidgetProvider.g.dart';
 @Riverpod(keepAlive: true)
 class Newmemorywidgetprovider extends _$Newmemorywidgetprovider {
 
+  @override
+
+
 @override
 FutureOr<Map<String,dynamic>> build() async {
 

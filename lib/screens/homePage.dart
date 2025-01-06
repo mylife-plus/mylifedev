@@ -3,11 +3,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:interactive_bottom_sheet/interactive_bottom_sheet.dart';
 import 'package:mapbox_maps_example/screens/contactsScreen.dart';
 import 'package:mapbox_maps_example/screens/settingsScreen.dart';
+import 'package:mapbox_maps_example/widgets/memoryScreen/newMemoryWidget.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
-import '../widgets/memoryScreen/newMemoryWidget.dart';
 import 'memoryFeedScreen.dart';
 
 class Homepage extends ConsumerStatefulWidget {
@@ -23,6 +22,7 @@ class _HomepageState extends ConsumerState<Homepage>
 
   ScrollController controller = ScrollController();
   ScrollController mapScrollController = ScrollController();
+  bool isOffstage = true;
 
   List tabs = [
     'assets/earth.png',
@@ -44,101 +44,88 @@ class _HomepageState extends ConsumerState<Homepage>
   final GlobalKey sheetKey = GlobalKey();
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: scaffoldKey,
-      extendBody: true,
-        body: TabBarView(
-            physics: _tabController.index==0?NeverScrollableScrollPhysics():AlwaysScrollableScrollPhysics(),
-            controller: _tabController,
-            children: [
-              LayoutBuilder(
-                builder: (BuildContext, constraints) => SizedBox(
-                    width: constraints.maxWidth,
-                    height: constraints.maxHeight,
-                    child: Stack(
-                      children: [
-                        MapWidget(
+    return SafeArea(
+      child: Stack(
+        children: [
+          Scaffold(
+            key: scaffoldKey,
+            extendBody: true,
+              body: TabBarView(
+                  physics: _tabController.index==0?NeverScrollableScrollPhysics():AlwaysScrollableScrollPhysics(),
+                  controller: _tabController,
+                  children: [
+                    LayoutBuilder(
+                      builder: (BuildContext, constraints) => SizedBox(
+                          width: constraints.maxWidth,
+                          height: constraints.maxHeight,
+                          child: Stack(
+                            children: [
+                              MapWidget(
 
-                          onMapCreated: (mapbox) => {map = mapbox},
-                          gestureRecognizers: {
-                            Factory<OneSequenceGestureRecognizer>(
-                              () => EagerGestureRecognizer(),
-                            ),
-                          },
+                                onMapCreated: (mapbox) => {map = mapbox},
+                                gestureRecognizers: {
+                                  Factory<OneSequenceGestureRecognizer>(
+                                    () => EagerGestureRecognizer(),
+                                  ),
+                                },
+                              ),
+                            ],
+                          )),
+                    ),
+                    MemoryFeedScreen(),
+                    ContactsScreen(),
+                    SettingsScreen(),
+                  ]),
+
+              floatingActionButton: FloatingActionButton(
+                backgroundColor: Colors.transparent,
+                elevation: 1,
+                        child: Icon(
+
+                          Icons.add,
+                          color: Colors.white,
+                          weight: 18,
                         ),
-                      ],
-                    )),
+                shape: CircleBorder(
+                  side: BorderSide(color: Colors.white, width: 2),
+                ), onPressed: () {
+
+                  setState(() {
+                    isOffstage=false;
+                  });;
+              },
               ),
-              MemoryFeedScreen(),
-              ContactsScreen(),
-              SettingsScreen(),
-            ]),
-        bottomSheet: InteractiveBottomSheet(controller: sheetController, options: InteractiveBottomSheetOptions(initialSize: 0.2, minimumSize: 0.1,maxSize: 0.9) , child: NewMemoryWidget(),),
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: Colors.transparent,
-          elevation: 1,
-                  child: Icon(
+              floatingActionButtonLocation:
+              FloatingActionButtonLocation.miniCenterDocked,
 
-                    Icons.add,
-                    color: Colors.white,
-                    weight: 18,
-
-                  ),
-          shape: CircleBorder(
-            side: BorderSide(color: Colors.white, width: 2),
-          ), onPressed: () {
-          sheetController.jumpTo(0.7);
-        },
-        ),
-        floatingActionButtonLocation:
-        FloatingActionButtonLocation.miniCenterDocked,
-
-        bottomNavigationBar: AnimatedBottomNavigationBar.builder(
-          elevation: 0,
-          notchSmoothness: NotchSmoothness.verySmoothEdge,
-          blurEffect: false,
-          backgroundColor: Colors.transparent,
-          gapWidth: 50,
-          gapLocation: GapLocation.center,
-          itemCount: 4,
-          tabBuilder: (int i, bool isActive) {
-            return Padding(
-              padding: EdgeInsets.symmetric(vertical: 8,horizontal: 8),
-              child: Image.asset(
-                tabs[i],
-                width: 36,
-                height: 36,
-              ),
-            );
-          },
-          activeIndex: index,
-          onTap: (requestedIndex) {
-            _tabController.animateTo(requestedIndex);
-            setState(() {
-              index = requestedIndex;
-            });
-          },
-        )
-
-        // BottomNavigationBar(
-        //   elevation: 1,
-        //   type: BottomNavigationBarType.fixed,
-        //     onTap: (requestedIndex){ _tabController.animateTo(requestedIndex);
-        //     setState(() {
-        //       index = requestedIndex;
-        //     });
-        //
-        //     },
-        //     currentIndex: index,
-        //
-        //
-        //     items: [
-        //
-        //     ...tabs.map((e)=>BottomNavigationBarItem(label: "",icon: ))
-        //
-        // ])
-
-        );
+              bottomNavigationBar: AnimatedBottomNavigationBar.builder(
+                elevation: 0,
+                notchSmoothness: NotchSmoothness.verySmoothEdge,
+                blurEffect: false,
+                backgroundColor: Colors.transparent,
+                gapWidth: 50,
+                gapLocation: GapLocation.center,
+                itemCount: 4,
+                tabBuilder: (int i, bool isActive) {
+                  return Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8,horizontal: 8),
+                    child: Image.asset(
+                      tabs[i],
+                      width: 36,
+                      height: 36,
+                    ),
+                  );
+                }, activeIndex: index, onTap: (requestedIndex) {_tabController.animateTo(requestedIndex);setState(() {index = requestedIndex;});},)),Material(
+                child: Offstage(
+                            offstage:isOffstage,
+                            child: Container(width: double.infinity,child: NewMemoryWidget(cancelCallback: (){setState(() {
+                isOffstage=true;
+                            });})),
+                          ),
+              )
+        ],
+      ),
+    );
   }
 }
 
