@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
-import 'package:mapbox_maps_example/models/hashtag.dart';
-import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
-import '../../models/contact.dart';
+import 'package:mapbox_maps_example/utils.dart';
+
 class NewMemoryWidget extends StatefulWidget {
 
   final VoidCallback cancelCallback;
@@ -24,6 +23,11 @@ class _NewMemoryWidgetState extends State<NewMemoryWidget> {
   ];
   final List<String> selectedHashtags = ["Alice Johnson",
     "Alice Smith"];
+   DateTime selectedDate = DateTime.now();
+   TimeOfDay selectedTime = TimeOfDay.now();
+   List listOfImages = [];
+   Map<String, dynamic> vocalsMap = {};
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -40,65 +44,89 @@ class _NewMemoryWidgetState extends State<NewMemoryWidget> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Flexible(
-                    child: Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(0),
-                            boxShadow: [
-                              BoxShadow(
-                                  offset: Offset(1, 1),
-                                  color: Colors.grey,
-                                  blurRadius: 3,
-                                  spreadRadius: 1)
-                            ],
-                            color: Colors.white,
-                            border: Border.all(color: Colors.grey, width: 1)),
-                        height: 48,
-                        child: Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 12, right: 12),
-                              child: Icon(
-                                Icons.calendar_month,
+                    child: GestureDetector(
+                      onTap: () async {
+              DateTime? pickedDate = await showDatePicker(
+              context: context,
+              initialDate: selectedDate,
+              firstDate: DateTime(1900),
+              lastDate: DateTime(DateTime.now().year+1),
+              );
+              if (pickedDate !=null){
+              setState(() {
+                selectedDate = pickedDate;
+              });
+              }
+              },
+                      child: Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(0),
+                              boxShadow: [
+                                BoxShadow(
+                                    offset: Offset(1, 1),
+                                    color: Colors.grey,
+                                    blurRadius: 3,
+                                    spreadRadius: 1)
+                              ],
+                              color: Colors.white,
+                              border: Border.all(color: Colors.grey, width: 1)),
+                          height: 48,
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(left: 12, right: 12),
+                                child: Icon(
+                                  Icons.calendar_month,
+                                ),
                               ),
-                            ),
-                            Text(
-                              '24/07/2024',
-                              style: TextStyle(fontSize: 22),
-                            ),
-                          ],
-                        )),
+                              Text(
+                                formatDate(selectedDate),
+                                style: TextStyle(fontSize: 22),
+                              ),
+                            ],
+                          )),
+                    ),
                   ),
                   SizedBox(
                     width: 4,
                   ),
                   Flexible(
-                    child: Container(
-                        decoration: BoxDecoration(
-                            boxShadow: [
-                              BoxShadow(
-                                  offset: Offset(1, 1),
-                                  color: Colors.grey,
-                                  blurRadius: 3,
-                                  spreadRadius: 1)
-                            ],
-                            borderRadius: BorderRadius.circular(0),
-                            color: Colors.white,
-                            border: Border.all(color: Colors.grey, width: 1)),
-                        height: 48,
-                        child: Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 12, right: 12),
-                              child: Icon(
-                                Icons.access_time_outlined,
+                    child: InkWell(onTap: () async {
+                      TimeOfDay? pickedTime = await showTimePicker(context: context, initialTime: TimeOfDay.now());
+                      if (pickedTime!=null){
+                        setState(() {
+                          selectedTime=pickedTime;
+                        });
+                      }
+                    },
+                      child: Container(
+                          decoration: BoxDecoration(
+                              boxShadow: [
+                                BoxShadow(
+                                    offset: Offset(1, 1),
+                                    color: Colors.grey,
+                                    blurRadius: 3,
+                                    spreadRadius: 1)
+                              ],
+                              borderRadius: BorderRadius.circular(0),
+                              color: Colors.white,
+                              border: Border.all(color: Colors.grey, width: 1)),
+                          height: 48,
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(left: 12, right: 12),
+                                child: Icon(
+                                  Icons.access_time_outlined,
+                                ),
                               ),
-                            ),
-                            Text(
-                              '20:20',
-                              style: TextStyle(fontSize: 22),
-                            ),
-                          ],
-                        )),
+                              Text(
+                                formatTime(selectedTime),
+                                style: TextStyle(fontSize: 22),
+                              ),
+                            ],
+                          )),
+                    ),
                   ),
                 ],
               ),
@@ -329,9 +357,9 @@ class _NewMemoryWidgetState extends State<NewMemoryWidget> {
             ),),
 
             SizedBox(height: 8,),
-            Container( margin: EdgeInsets.symmetric(horizontal: 12).copyWith(top: 20) , height: 92, child: Row(
+            Container( margin: EdgeInsets.symmetric(horizontal: 12) , height: 92, child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(child: Center(child:IconButton(onPressed: widget.cancelCallback, icon: Icon(Icons.close, color: Colors.red), iconSize: 46,),
                 ),decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white, boxShadow: [BoxShadow(color: Colors.grey,blurRadius: 3,spreadRadius: 1,offset: Offset(1, 1))]),),
