@@ -53,9 +53,11 @@ class MyLifeApp extends StatelessWidget {
 
       } ,
         theme: ThemeData(
+
           bottomSheetTheme: BottomSheetThemeData(
               backgroundColor: Colors.black.withOpacity(0.5)),
-
+          datePickerTheme: DatePickerThemeData(backgroundColor: Colors.white),
+          timePickerTheme: TimePickerThemeData(backgroundColor: Colors.white),
           appBarTheme: AppBarTheme(
         elevation: 0,
     ),
