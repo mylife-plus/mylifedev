@@ -90,9 +90,11 @@ class _HomepageState extends ConsumerState<Homepage>
                                       await rootBundle.load('assets/pin.png');
                                   final Uint8List imageList = bytes.buffer.asUint8List();
 
-                                  annotation = await  manager?.create(PointAnnotationOptions(geometry: iconPosition, image: imageList, iconSize: 0.2                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  ²²));
+                                  annotation = await  manager?.create(PointAnnotationOptions(geometry: iconPosition, image: imageList, iconSize: 0.15, iconOffset: [0,-100]));
 
                                 },
+
+
                                 onMapCreated: (mapbox) async {
                                   map = mapbox;
                                  manager = await map.annotations.createPointAnnotationManager();
@@ -100,7 +102,7 @@ class _HomepageState extends ConsumerState<Homepage>
                                   await rootBundle.load('assets/pin.png');
                                   final Uint8List imageList = bytes.buffer.asUint8List();
 
-                               annotation = await  manager?.create(PointAnnotationOptions(geometry: iconPosition, image: imageList, iconSize: 0.1));
+                               annotation = await  manager?.create(PointAnnotationOptions(geometry: iconPosition, image: imageList, iconSize: 0.15));
 
 
 
