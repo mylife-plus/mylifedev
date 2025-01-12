@@ -18,8 +18,8 @@ class MapScreen extends ConsumerStatefulWidget {
 }
 
 class _MapScreenState extends ConsumerState<MapScreen> with AutomaticKeepAliveClientMixin{
-  @override
 
+  @override
   bool get wantKeepAlive => true;
 
 
@@ -38,6 +38,7 @@ class _MapScreenState extends ConsumerState<MapScreen> with AutomaticKeepAliveCl
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final AsyncValue<List<double>> locationData = ref.watch(
         locationGetterProvider);
 
