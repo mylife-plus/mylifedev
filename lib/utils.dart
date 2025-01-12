@@ -3,8 +3,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:permission_handler/permission_handler.dart';
 
-Future<Position> determinePosition() async {
+Future<List<double>> determinePosition() async {
 
 
   bool serviceEnabled;
@@ -39,9 +40,24 @@ Future<Position> determinePosition() async {
 
   // When we reach here, permissions are granted and we can
   // continue accessing the position of the device.
-  return await Geolocator.getCurrentPosition();
+  Position position = await Geolocator.getCurrentPosition();
+  return [position.longitude, position.latitude] ;
 }
 
+Future<void> checkAndRequestPermissions() async {
+  // Request notification permission
+  if (await Permission.notification.request().isDenied) {
+    print("Notification permission denied");
+  }
+
+  // Request media permissions
+  if (await Permission.audio.request().isDenied) {
+    print("Audio permission denied");
+  }
+  if (await Permission.mediaLibrary.request().isDenied) {
+    print("Media library permission denied");
+  }
+}
 
 String formatTime(TimeOfDay time){
   return "${time.hour<10?"0"+time.hour.toString():time.hour}:${time.minute<10?"0"+time.minute.toString():time.minute}";

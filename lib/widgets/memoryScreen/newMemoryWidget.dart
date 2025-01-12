@@ -1,17 +1,27 @@
+import 'dart:typed_data';
+
+import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:mapbox_maps_example/utils.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class NewMemoryWidget extends StatefulWidget {
 
   final VoidCallback cancelCallback;
-  const NewMemoryWidget({super.key, required this.cancelCallback});
+  final VoidCallback locationCallback;
+  final List<double> location;
+  const NewMemoryWidget({super.key, required this.cancelCallback, required this.locationCallback, required this.location});
   @override
   State<NewMemoryWidget> createState() => _NewMemoryWidgetState();
 }
 class _NewMemoryWidgetState extends State<NewMemoryWidget> {
   final TextEditingController textEditingController = TextEditingController();
   final FocusNode focusNode = FocusNode();
+  Map<XFile,Uint8List> pickedMedia = {};
+  final RecorderController recorderController = RecorderController();
+  String? recordedFilePath;
   final List<String> mockContacts = [
     "Alice Johnson",
     "Alice Smith",
@@ -27,6 +37,17 @@ class _NewMemoryWidgetState extends State<NewMemoryWidget> {
    TimeOfDay selectedTime = TimeOfDay.now();
    List listOfImages = [];
    Map<String, dynamic> vocalsMap = {};
+    bool isRecording = false;
+   @override
+  void initState() {
+    super.initState();
+    recorderController.checkPermission();
+  }
+  @override
+  void dispose() {
+    recorderController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -150,19 +171,22 @@ class _NewMemoryWidgetState extends State<NewMemoryWidget> {
                       color: Colors.white,
                       border: Border.all(color: Colors.grey, width: 1)),
                   height: 48,
-                  child: Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 12, right: 12),
-                        child: Icon(
-                          Icons.location_on_outlined,
+                  child: InkWell(
+                    onTap: widget.locationCallback,
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 12, right: 12),
+                          child: Icon(
+                            Icons.location_on_outlined,
+                          ),
                         ),
-                      ),
-                      Text(
-                        '20.025544,  35.636684',
-                        style: TextStyle(fontSize: 22),
-                      ),
-                    ],
+                        Text(
+                          '${widget.location[0].toStringAsFixed(6)},  ${widget.location[1].toStringAsFixed(6) }',
+                          style: TextStyle(fontSize: 22),
+                        ),
+                      ],
+                    ),
                   )),
             ),
             SizedBox(
@@ -172,24 +196,75 @@ class _NewMemoryWidgetState extends State<NewMemoryWidget> {
               color: Colors.green.withOpacity(0.1),
               height: 92,
               width: double.infinity,
-              child: Row(
+              child: Stack(
                 children: [
-                  Container(
-                    height: 92,
-                    width: 92,
-                    child: Icon(Icons.camera_alt_outlined, size: 32, color: Colors.green,),
-                    decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                              offset: Offset(1, 1),
-                              color: Colors.grey,
-                              blurRadius: 3,
-                              spreadRadius: 1)
-                        ],
-                        borderRadius: BorderRadius.circular(0),
-                        color: Colors.white,
-                        border: Border.all(color: Colors.grey, width: 1)),
-                  )
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [Container(
+                        height: 92,
+                        width: 92,
+                        decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                  offset: Offset(1, 1),
+                                  color: Colors.grey,
+                                  blurRadius: 3,
+                                  spreadRadius: 1)
+                            ],
+                            borderRadius: BorderRadius.circular(0),
+                            color: Colors.white,
+                            border: Border.all(color: Colors.grey, width: 1)),
+                      ),
+                        ...pickedMedia.keys.map((e)=>Container(
+                          margin: EdgeInsets.symmetric(horizontal: 2),
+                          height: 92,
+                          width: 92,
+                          decoration: BoxDecoration(
+                              boxShadow: [
+                                BoxShadow(
+                                    offset: Offset(1, 1),
+                                    color: Colors.grey,
+                                    blurRadius: 3,
+                                    spreadRadius: 1)
+                              ],
+                              borderRadius: BorderRadius.circular(0),
+                              color: Colors.black,
+                              border: Border.all(color: Colors.grey, width: 1)),
+                          child: Image.memory(pickedMedia[e]!),
+                        ),)
+
+
+                      ],
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      InkWell(
+                        onTap: () async {
+                          checkAndRequestPermissions();
+                         await _pickMedia();
+
+                        },
+                        child: Container(
+                          height: 92,
+                          width: 92,
+                          child: Icon(Icons.camera_alt_outlined, size: 32, color: Colors.green,),
+                          decoration: BoxDecoration(
+                              boxShadow: [
+                                BoxShadow(
+                                    offset: Offset(1, 1),
+                                    color: Colors.grey,
+                                    blurRadius: 3,
+                                    spreadRadius: 1)
+                              ],
+                              borderRadius: BorderRadius.circular(0),
+                              color: Colors.white,
+                              border: Border.all(color: Colors.grey, width: 1)),
+                        ),
+                      )
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -205,7 +280,30 @@ class _NewMemoryWidgetState extends State<NewMemoryWidget> {
                   Container(
                     height: 92,
                     width: 92,
-                    child: Icon(Icons.mic, size: 32, color: Colors.blue),
+                    child: IconButton(icon: Icon(Icons.mic, size: 32, color: isRecording?Colors.red:Colors.blue),
+                    onPressed: () async {
+                      if(!recorderController.hasPermission){
+
+                        await recorderController.checkPermission();
+                        await Permission.microphone.request();
+                        await Permission.audio.request();
+
+                      }
+                      if (recorderController.hasPermission && !isRecording){
+
+                        recorderController.record();
+                        setState(() {
+                          isRecording = true;
+                        });
+                      }
+                      else if(recorderController.hasPermission && isRecording) {
+                        recorderController.pause();
+                        setState(() {
+                          isRecording = false;
+                        });
+
+                      }
+                      },),
                     decoration: BoxDecoration(
                         boxShadow: [
                           BoxShadow(
@@ -217,6 +315,11 @@ class _NewMemoryWidgetState extends State<NewMemoryWidget> {
                         borderRadius: BorderRadius.circular(0),
                         color: Colors.white,
                         border: Border.all(color: Colors.grey, width: 1)),
+                  ),
+                  Container(
+                    width: 280,
+                    height: 92,
+                    child: AudioWaveforms(size: Size(280, 92), recorderController: recorderController),
                   )
                 ],
               ),
@@ -376,4 +479,48 @@ class _NewMemoryWidgetState extends State<NewMemoryWidget> {
       ),
     );
   }
+  Future<void> _pickMedia() async {
+    final ImagePicker picker = ImagePicker();
+
+    showDialog(context: context, builder: (BuildContext context)=>Center(
+      child: Container(decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), color: Colors.white),width: 200,height: 200,child: Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly,children: [
+        Text("Data Source"),
+        ElevatedButton(onPressed: () async {
+          final XFile? file = await picker.pickImage(source: ImageSource.camera);
+
+          if(file != null){
+            final byteList = await file.readAsBytes();
+            setState(() {
+              pickedMedia.putIfAbsent(file, ()=>byteList);
+            });
+          }
+
+
+        }, child: Text("Camera")),
+        ElevatedButton(onPressed: () async {
+
+          final List<XFile> files = await picker.pickMultipleMedia();
+          if (files.isNotEmpty){
+
+              files.forEach((e) async {
+
+                final bytes = await e.readAsBytes();
+
+                setState(() {
+                  pickedMedia.putIfAbsent(e, ()=>bytes);
+                });
+
+              });
+
+          }
+
+        }, child: Text("Gallery"))
+      ],),),
+    ));
+
+
+  }
+
+
+
 }
