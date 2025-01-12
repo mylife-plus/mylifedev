@@ -17,6 +17,8 @@ class NewMemoryWidget extends StatefulWidget {
   State<NewMemoryWidget> createState() => _NewMemoryWidgetState();
 }
 class _NewMemoryWidgetState extends State<NewMemoryWidget> {
+
+
   final TextEditingController textEditingController = TextEditingController();
   final FocusNode focusNode = FocusNode();
   Map<XFile,Uint8List> pickedMedia = {};
@@ -36,8 +38,11 @@ class _NewMemoryWidgetState extends State<NewMemoryWidget> {
    DateTime selectedDate = DateTime.now();
    TimeOfDay selectedTime = TimeOfDay.now();
    List listOfImages = [];
-   Map<String, dynamic> vocalsMap = {};
     bool isRecording = false;
+    int? playedRecordingIndex;
+    final List<String> listOfRecordings=[];
+PlayerController playerController = PlayerController();
+
    @override
   void initState() {
     super.initState();
@@ -189,6 +194,9 @@ class _NewMemoryWidgetState extends State<NewMemoryWidget> {
                     ),
                   )),
             ),
+
+            // So to be hoents I can't thiunk orf som"thning else in this world you little mitoherfuekr I can't think of something else in this world you little mth
+
             SizedBox(
               height: 4,
             ),
@@ -275,52 +283,106 @@ class _NewMemoryWidgetState extends State<NewMemoryWidget> {
               color: Colors.blue.withOpacity(0.1),
               height: 92,
               width: double.infinity,
-              child: Row(
+              child: Stack(
                 children: [
-                  Container(
-                    height: 92,
-                    width: 92,
-                    child: IconButton(icon: Icon(Icons.mic, size: 32, color: isRecording?Colors.red:Colors.blue),
-                    onPressed: () async {
-                      if(!recorderController.hasPermission){
+                  SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        Container(
+                          height: 92,
+                          width: 92,
+                          decoration: BoxDecoration(
+                              boxShadow: [
+                                BoxShadow(
+                                    offset: Offset(1, 1),
+                                    color: Colors.grey,
+                                    blurRadius: 3,
+                                    spreadRadius: 1)
+                              ],
+                              borderRadius: BorderRadius.circular(0),
+                              color: Colors.white,
+                              border: Border.all(color: Colors.grey, width: 1)),
+                        ),
+                        ...listOfRecordings.map((e)=>GestureDetector(
+                          onTap: () async {
+                             await playerController.preparePlayer(path: e, shouldExtractWaveform: false, volume: 1);
+                             playerController.startPlayer();
 
-                        await recorderController.checkPermission();
-                        await Permission.microphone.request();
-                        await Permission.audio.request();
+                          },
 
-                      }
-                      if (recorderController.hasPermission && !isRecording){
-
-                        recorderController.record();
-                        setState(() {
-                          isRecording = true;
-                        });
-                      }
-                      else if(recorderController.hasPermission && isRecording) {
-                        recorderController.pause();
-                        setState(() {
-                          isRecording = false;
-                        });
-
-                      }
-                      },),
-                    decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                              offset: Offset(1, 1),
-                              color: Colors.grey,
-                              blurRadius: 3,
-                              spreadRadius: 1)
-                        ],
-                        borderRadius: BorderRadius.circular(0),
-                        color: Colors.white,
-                        border: Border.all(color: Colors.grey, width: 1)),
+                          child: Container(margin: EdgeInsets.symmetric(horizontal: 2),
+                            height: 92,
+                            width: 92,
+                            decoration: BoxDecoration(
+                                boxShadow: [
+                                  BoxShadow(
+                                      offset: Offset(1, 1),
+                                      color: Colors.grey,
+                                      blurRadius: 3,
+                                      spreadRadius: 1)
+                                ],
+                                borderRadius: BorderRadius.circular(0),
+                                color: Colors.black,
+                                border: Border.all(color: Colors.grey, width: 1)),
+                          child: playedRecordingIndex==listOfRecordings.indexOf(e)?Icon(Icons.pause, color: Colors.red,):Icon(Icons.play_arrow, color: Colors.green,),),
+                        ))
+                      ],
+                    ),
                   ),
-                  Container(
-                    width: 280,
-                    height: 92,
-                    child: AudioWaveforms(size: Size(280, 92), recorderController: recorderController),
-                  )
+                  Row(
+                    children: [
+                      Container(
+                        height: 92,
+                        width: 92,
+                        child: IconButton(icon: Icon(Icons.mic, size: 32, color: isRecording?Colors.red:Colors.blue),
+                        onPressed: () async {
+                          if(!recorderController.hasPermission){
+
+                            await recorderController.checkPermission();
+                            await Permission.microphone.request();
+                            await Permission.audio.request();
+
+                          }
+                          if (recorderController.hasPermission && !isRecording){
+
+                            recorderController.record();
+                            setState(() {
+                              isRecording = true;
+                            });
+                          }
+                          else if(recorderController.hasPermission && isRecording) {
+                          String? path = await recorderController.stop();
+                            print(path);
+                          if(path !=null){
+                            setState(() {
+                              listOfRecordings.add(path);
+                            });
+                          }
+                          else{
+                            print("something went wrong!");
+                          }
+
+                            setState(() {
+                              isRecording = false;
+                            });
+
+                          }
+                          },),
+                        decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                  offset: Offset(1, 1),
+                                  color: Colors.grey,
+                                  blurRadius: 3,
+                                  spreadRadius: 1)
+                            ],
+                            borderRadius: BorderRadius.circular(0),
+                            color: Colors.white,
+                            border: Border.all(color: Colors.grey, width: 1)),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),

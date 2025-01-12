@@ -90,7 +90,7 @@ class _HomepageState extends ConsumerState<Homepage>
 
                         if(isLocationChoosingMode){
                           manager?.delete(annotation!);
-                          annotation = await  manager?.create(PointAnnotationOptions(geometry: iconPosition, image: pinImage, iconSize: 0.2));
+                          annotation = await  manager?.create(PointAnnotationOptions(geometry: iconPosition, image: pinImage, iconSize: 0.2, iconOffset: [0,-100]));
 
                         }
 
@@ -120,7 +120,7 @@ class _HomepageState extends ConsumerState<Homepage>
 
                                     manager?.delete(annotation!);
 
-                                    annotation = await  manager?.create(PointAnnotationOptions(geometry: iconPosition, image: pinImage, iconSize: 0.15, iconOffset: [0,-100]));
+                                    annotation = await  manager?.create(PointAnnotationOptions(geometry: iconPosition, image: pinImage, iconSize: 0.2, iconOffset: [0,-100]));
 
                                   }
 
