@@ -8,10 +8,11 @@ class MemoryFeedScreen extends StatefulWidget {
   MemoryFeedScreenState createState() => MemoryFeedScreenState();
 }
 
-class MemoryFeedScreenState extends State<MemoryFeedScreen> {
+class MemoryFeedScreenState extends State<MemoryFeedScreen> with AutomaticKeepAliveClientMixin{
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -80,4 +81,8 @@ class MemoryFeedScreenState extends State<MemoryFeedScreen> {
 
     );
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }

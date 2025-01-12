@@ -1,5 +1,4 @@
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,18 +22,19 @@ class _HomepageState extends ConsumerState<Homepage>
 
 
   int index = 0;
-  PointAnnotationManager? manager;
-  bool isOffstage = true;
-  Point currentPoint = Point(coordinates: Position(0, 0));
-  Point iconPosition = Point(coordinates: Position(0, 0));
-  PointAnnotation? annotation;
-  bool isLocationChoosingMode = false;
+
   List tabs = [
     'assets/earth.png',
     'assets/book.png',
     'assets/user.png',
     'assets/cogwheel.png',
   ];
+  PointAnnotationManager? manager;
+  bool isOffstage = true;
+  Point currentPoint = Point(coordinates: Position(0, 0));
+  Point iconPosition = Point(coordinates: Position(0, 0));
+  PointAnnotation? annotation;
+  bool isLocationChoosingMode = false;
   late TabController _tabController;
   late MapboxMap map;
   late Uint8List pinImage;
@@ -81,7 +81,35 @@ class _HomepageState extends ConsumerState<Homepage>
                             height: constraints.maxHeight,
                             child: Stack(
                               children: [
-                                MapScreen(),
+                                MapScreen( onTapListener: (e) async {
+
+                        setState(() {
+                        iconPosition = e.point;
+                        });
+
+
+                        if(isLocationChoosingMode){
+                          manager?.delete(annotation!);
+                          annotation = await  manager?.create(PointAnnotationOptions(geometry: iconPosition, image: pinImage, iconSize: 0.2));
+
+                        }
+
+                        }, onMapCreated: (mapbox) async {
+                                  map = mapbox;
+                                  map.logo.updateSettings(LogoSettings(enabled: false));
+                                  map.attribution.updateSettings(AttributionSettings(enabled: false));
+                                  map.scaleBar.updateSettings(ScaleBarSettings(enabled:false));
+                                  map.compass.updateSettings(CompassSettings(enabled: false));
+                                  manager = await map.annotations.createPointAnnotationManager();
+                                   bytes =
+                                  await rootBundle.load('assets/pin.png');
+                                   pinImage = bytes.buffer.asUint8List();
+
+                                  annotation = await  manager?.create(PointAnnotationOptions(geometry: iconPosition, image: pinImage, iconSize: 0.2, iconOpacity: 0));
+
+
+
+                                }, ),
                                 isLocationChoosingMode?Positioned(top: 20,left: 20,child: IconButton(onPressed: () async {
 
                                   if (isLocationChoosingMode){
@@ -182,4 +210,5 @@ class _HomepageState extends ConsumerState<Homepage>
       isOffstage = true;
     });
   }
+
 }
