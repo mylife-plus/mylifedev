@@ -2,10 +2,14 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:flutter_contacts/contact.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 Future<List<double>> determinePosition() async {
+
+
 
 
   bool serviceEnabled;
@@ -58,6 +62,18 @@ Future<void> checkAndRequestPermissions() async {
     print("Media library permission denied");
   }
 }
+
+
+Future<List<Contact>> getAllContacts() async {
+
+  if(! await Permission.contacts.isGranted){
+    await Permission.contacts.request();
+  }
+
+  return FlutterContacts.getContacts();
+
+}
+
 
 String formatTime(TimeOfDay time){
   return "${time.hour<10?"0"+time.hour.toString():time.hour}:${time.minute<10?"0"+time.minute.toString():time.minute}";

@@ -1,7 +1,9 @@
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mapbox_maps_example/providers/locationProvider.dart';
 import 'package:mapbox_maps_example/screens/contactsScreen.dart';
 import 'package:mapbox_maps_example/screens/mapScreen.dart';
@@ -55,8 +57,6 @@ class _HomepageState extends ConsumerState<Homepage>
    final AsyncValue<List<double>> locationData =  ref.watch(locationGetterProvider);
 
     return locationData.when(data: (location){
-      print("this is the location \n \n Find it below\n ");
-      print(location);
 
       setState(() {
         iconPosition = Point(coordinates: Position(location[0], location[1]));
@@ -67,9 +67,12 @@ class _HomepageState extends ConsumerState<Homepage>
         child: Stack(
           children: [
             Scaffold(
+                resizeToAvoidBottomInset:false,
                 key: scaffoldKey,
                 extendBody: true,
+
                 body: TabBarView(
+                  dragStartBehavior: DragStartBehavior.down,
                     physics: _tabController.index == 0
                         ? NeverScrollableScrollPhysics()
                         : AlwaysScrollableScrollPhysics(),
@@ -122,15 +125,16 @@ class _HomepageState extends ConsumerState<Homepage>
 
                                     annotation = await  manager?.create(PointAnnotationOptions(geometry: iconPosition, image: pinImage, iconSize: 0.2, iconOffset: [0,-100]));
 
+                                    await map.flyTo(CameraOptions(center: iconPosition), MapAnimationOptions());
                                   }
 
-                                }, icon: Icon(Icons.location_on_outlined, size: 36, color: Colors.white,))):SizedBox.shrink(),
+                                }, icon: Image.asset("assets/map.png", scale: 1.3,))):SizedBox.shrink(),
                                 isLocationChoosingMode?Positioned(top: 20,right: 20,child: IconButton(onPressed: (){
                                   setState(() {
                                     isLocationChoosingMode=false;
                                     isOffstage=false;
                                   });
-                                }, icon: Icon(Icons.check, color: Colors.white,size: 36,))):SizedBox.shrink()
+                                }, icon: Icon(grade: 0.5,Icons.check, color: Colors.white,size: 36,shadows: [Shadow(color: Colors.black, blurRadius: 9,)],))):SizedBox.shrink()
                               ],
                             )),
                       ),
@@ -169,11 +173,11 @@ class _HomepageState extends ConsumerState<Homepage>
                   tabBuilder: (int i, bool isActive) {
                     return Padding(
                       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-                      child: Image.asset(
-                        tabs[i],
-                        width: 36,
-                        height: 36,
-                      ),
+                      child: SvgPicture.asset("assetName") //Image.asset(
+                       // tabs[i],
+                       // width: 36,
+                       // height: 36,
+                      //),
                     );
                   },
                   activeIndex: index,

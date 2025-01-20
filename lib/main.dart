@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mapbox_maps_example/providers/locationProvider.dart';
 import 'package:mapbox_maps_example/screens/LoginPage.dart';
 import 'package:mapbox_maps_example/screens/addMemoryScreen.dart';
+import 'package:mapbox_maps_example/screens/addNewContactScreen.dart';
 import 'package:mapbox_maps_example/screens/homePage.dart';
 import 'package:mapbox_maps_example/screens/memoryFeedScreen.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
@@ -37,6 +38,7 @@ class MyLifeApp extends ConsumerWidget {
 
 
           "/": (BuildContext context) => Homepage(),
+          "/newContact": (BuildContext context) => AddNewContactScreen(),
           "/login": (BuildContext context) => LoginPage(),
           "/memoryFeed": (BuildContext context) => MemoryFeedScreen(),
           "/addMemory": (BuildContext context) => MemoryAddScreen(),

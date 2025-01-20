@@ -10,6 +10,8 @@
     <string>Used to add photos inside a Memory from the camera</string>
     <key>NSPhotoLibraryUsageDescription</key>
     <string>Used to add photos inside a Memory from the gallery</string>
+    <key>NSContactsUsageDescription</key>
+    <string>To get contacts from phone and sync it with the App contacts</string>
 	<key>NSMicrophoneUsageDescription</key>
     <string>Used to record memory voice</string>
 	<key>NSLocationWhenInUseUsageDescription</key>

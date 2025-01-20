@@ -311,7 +311,8 @@ PlayerController playerController = PlayerController();
 
                           },
 
-                          child: Container(margin: EdgeInsets.symmetric(horizontal: 2),
+                          child: Container(
+                            margin: EdgeInsets.symmetric(horizontal: 2),
                             height: 92,
                             width: 92,
                             decoration: BoxDecoration(
@@ -323,9 +324,17 @@ PlayerController playerController = PlayerController();
                                       spreadRadius: 1)
                                 ],
                                 borderRadius: BorderRadius.circular(0),
-                                color: Colors.black,
+                                color: Colors.white,
                                 border: Border.all(color: Colors.grey, width: 1)),
-                          child: playedRecordingIndex==listOfRecordings.indexOf(e)?Icon(Icons.pause, color: Colors.red,):Icon(Icons.play_arrow, color: Colors.green,),),
+                            child: Column(
+                              children: [
+                                Container(
+                                  child: (playedRecordingIndex==listOfRecordings.indexOf(e) && playerController.playerState==PlayerState.playing)?Icon(Icons.pause, color: Colors.red,):Icon(Icons.play_arrow, color: Colors.green,),
+                                ),
+                                Text(playerController.maxDuration.toString()),
+                              ],
+                            ),
+                          ),
                         ))
                       ],
                     ),
@@ -399,6 +408,9 @@ PlayerController playerController = PlayerController();
                     color: Colors.white,
                     border: Border.all(color: Colors.grey, width: 1)),
                 child: TextField(
+                  onTapOutside: (e){
+                    focusNode.unfocus();
+                  },
                   decoration:
                   new InputDecoration.collapsed(hintText: 'My memory...'),
                   maxLines: 50,

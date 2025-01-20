@@ -2,6 +2,8 @@ PODS:
   - audio_waveforms (0.0.1):
     - Flutter
   - Flutter (1.0.0)
+  - flutter_contacts (0.0.1):
+    - Flutter
   - flutter_keyboard_visibility (0.0.1):
     - Flutter
   - flutter_sound (9.17.8):
@@ -41,6 +43,7 @@ PODS:
 DEPENDENCIES:
   - audio_waveforms (from `.symlinks/plugins/audio_waveforms/ios`)
   - Flutter (from `Flutter`)
+  - flutter_contacts (from `.symlinks/plugins/flutter_contacts/ios`)
   - flutter_keyboard_visibility (from `.symlinks/plugins/flutter_keyboard_visibility/ios`)
   - flutter_sound (from `.symlinks/plugins/flutter_sound/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
@@ -65,6 +68,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/audio_waveforms/ios"
   Flutter:
     :path: Flutter
+  flutter_contacts:
+    :path: ".symlinks/plugins/flutter_contacts/ios"
   flutter_keyboard_visibility:
     :path: ".symlinks/plugins/flutter_keyboard_visibility/ios"
   flutter_sound:
@@ -89,6 +94,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   audio_waveforms: cd736909ebc6b6a164eb74701d8c705ce3241e1c
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  flutter_contacts: edb1c5ce76aa433e20e6cb14c615f4c0b66e0983
   flutter_keyboard_visibility: 0339d06371254c3eb25eeb90ba8d17dca8f9c069
   flutter_sound: 7c797c81917a962510b0d187a3323ae78efbf5eb
   flutter_sound_core: d530b4031479967b66d37cab067547739f1e1910

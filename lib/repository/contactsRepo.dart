@@ -9,21 +9,29 @@ class ContactRepository {
 
   // Basic CRUD for Contacts
   Future<int> insertContact(Contact contact) async {
+
     final db = await AppDatabase.instance.database;
     return db.insert('Contacts', contact.toMap());
+
   }
 
   Future<List<Contact>> fetchAllContacts() async {
+
     final db = await AppDatabase.instance.database;
+
     final maps = await db.query('Contacts');
+
     return maps.map((m) => Contact.fromMap(m)).toList();
+
   }
 
   Future<Contact?> fetchContactById(int id) async {
+
     final db = await AppDatabase.instance.database;
     final maps = await db.query('Contacts', where: 'id = ?', whereArgs: [id]);
     if (maps.isEmpty) return null;
     return Contact.fromMap(maps.first);
+
   }
 
   Future<int> updateContact(Contact contact) async {
