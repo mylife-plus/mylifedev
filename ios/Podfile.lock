@@ -1,9 +1,17 @@
 PODS:
+  - audio_waveforms (0.0.1):
+    - Flutter
   - Flutter (1.0.0)
+  - flutter_contacts (0.0.1):
+    - Flutter
+  - flutter_keyboard_visibility (0.0.1):
+    - Flutter
   - flutter_sound (9.17.8):
     - Flutter
     - flutter_sound_core (= 9.17.8)
   - flutter_sound_core (9.17.8)
+  - geolocator_apple (1.2.0):
+    - Flutter
   - image_picker_ios (0.0.1):
     - Flutter
   - integration_test (0.0.1):
@@ -25,19 +33,26 @@ PODS:
     - FlutterMacOS
   - permission_handler_apple (9.1.1):
     - Flutter
+  - pointer_interceptor_ios (0.0.1):
+    - Flutter
   - sqflite_darwin (0.0.4):
     - Flutter
     - FlutterMacOS
   - Turf (4.0.0)
 
 DEPENDENCIES:
+  - audio_waveforms (from `.symlinks/plugins/audio_waveforms/ios`)
   - Flutter (from `Flutter`)
+  - flutter_contacts (from `.symlinks/plugins/flutter_contacts/ios`)
+  - flutter_keyboard_visibility (from `.symlinks/plugins/flutter_keyboard_visibility/ios`)
   - flutter_sound (from `.symlinks/plugins/flutter_sound/ios`)
+  - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - integration_test (from `.symlinks/plugins/integration_test/ios`)
   - mapbox_maps_flutter (from `.symlinks/plugins/mapbox_maps_flutter/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
+  - pointer_interceptor_ios (from `.symlinks/plugins/pointer_interceptor_ios/ios`)
   - sqflite_darwin (from `.symlinks/plugins/sqflite_darwin/darwin`)
 
 SPEC REPOS:
@@ -49,10 +64,18 @@ SPEC REPOS:
     - Turf
 
 EXTERNAL SOURCES:
+  audio_waveforms:
+    :path: ".symlinks/plugins/audio_waveforms/ios"
   Flutter:
     :path: Flutter
+  flutter_contacts:
+    :path: ".symlinks/plugins/flutter_contacts/ios"
+  flutter_keyboard_visibility:
+    :path: ".symlinks/plugins/flutter_keyboard_visibility/ios"
   flutter_sound:
     :path: ".symlinks/plugins/flutter_sound/ios"
+  geolocator_apple:
+    :path: ".symlinks/plugins/geolocator_apple/ios"
   image_picker_ios:
     :path: ".symlinks/plugins/image_picker_ios/ios"
   integration_test:
@@ -63,13 +86,19 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
   permission_handler_apple:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
+  pointer_interceptor_ios:
+    :path: ".symlinks/plugins/pointer_interceptor_ios/ios"
   sqflite_darwin:
     :path: ".symlinks/plugins/sqflite_darwin/darwin"
 
 SPEC CHECKSUMS:
+  audio_waveforms: cd736909ebc6b6a164eb74701d8c705ce3241e1c
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  flutter_contacts: edb1c5ce76aa433e20e6cb14c615f4c0b66e0983
+  flutter_keyboard_visibility: 0339d06371254c3eb25eeb90ba8d17dca8f9c069
   flutter_sound: 7c797c81917a962510b0d187a3323ae78efbf5eb
   flutter_sound_core: d530b4031479967b66d37cab067547739f1e1910
+  geolocator_apple: 9bcea1918ff7f0062d98345d238ae12718acfbc1
   image_picker_ios: c560581cceedb403a6ff17f2f816d7fea1421fc1
   integration_test: 252f60fa39af5e17c3aa9899d35d908a0721b573
   mapbox_maps_flutter: d51b6d48ba9d8231a77269f1743ec175099d7b15
@@ -78,6 +107,7 @@ SPEC CHECKSUMS:
   MapboxMaps: 2ce57c4ec89d8f05eacfebdd39b01216e0c06168
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   permission_handler_apple: e76247795d700c14ea09e3a2d8855d41ee80a2e6
+  pointer_interceptor_ios: 508241697ff0947f853c061945a8b822463947c1
   sqflite_darwin: 5a7236e3b501866c1c9befc6771dfd73ffb8702d
   Turf: c9eb11a65d96af58cac523460fd40fec5061b081
 

@@ -6,7 +6,16 @@
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>MBXAccessToken</key>
 	<string>sk.eyJ1Ijoib3V0YnVyc3Q5OSIsImEiOiJjbTR1ZWM0eXMwa3ZlMnBzZzU3MHFwa3hrIn0.q6hXu5HhQv_ZKEdXhvMbJQ</string>
+	<key>NSCameraUsageDescription</key>
+    <string>Used to add photos inside a Memory from the camera</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Used to add photos inside a Memory from the gallery</string>
+    <key>NSContactsUsageDescription</key>
+    <string>To get contacts from phone and sync it with the App contacts</string>
+	<key>NSMicrophoneUsageDescription</key>
+    <string>Used to record memory voice</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
+
     <string>Location needed to get current location on the map</string>
 	<key>CFBundleDisplayName</key>
 	<string>Mylifey</string>

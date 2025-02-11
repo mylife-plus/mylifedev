@@ -105,7 +105,6 @@ class MemoryContent extends StatelessWidget {
                       fontFamily: 'Kumbh Sans',
                       color: Colors.black,
                     ),
-                textScaleFactor: 1.0,
               ),
             ),
 

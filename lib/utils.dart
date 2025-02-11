@@ -2,9 +2,21 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:flutter_contacts/contact.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:permission_handler/permission_handler.dart';
 
-Future<Position> determinePosition() async {
+
+String capitalize(String text){
+
+  return text[0].toUpperCase()+text.substring(1);
+
+}
+
+Future<List<double>> determinePosition() async {
+
+
 
 
   bool serviceEnabled;
@@ -39,7 +51,34 @@ Future<Position> determinePosition() async {
 
   // When we reach here, permissions are granted and we can
   // continue accessing the position of the device.
-  return await Geolocator.getCurrentPosition();
+  Position position = await Geolocator.getCurrentPosition();
+  return [position.longitude, position.latitude] ;
+}
+
+Future<void> checkAndRequestPermissions() async {
+  // Request notification permission
+  if (await Permission.notification.request().isDenied) {
+    print("Notification permission denied");
+  }
+
+  // Request media permissions
+  if (await Permission.audio.request().isDenied) {
+    print("Audio permission denied");
+  }
+  if (await Permission.mediaLibrary.request().isDenied) {
+    print("Media library permission denied");
+  }
+}
+
+
+Future<List<Contact>> getAllContacts() async {
+
+  if(! await Permission.contacts.isGranted){
+    await Permission.contacts.request();
+  }
+
+  return FlutterContacts.getContacts();
+
 }
 
 

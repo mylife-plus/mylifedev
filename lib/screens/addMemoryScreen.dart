@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../widgets/memoryHeaderSection.dart';
-import '../widgets/newMemoryForm.dart';
 
 class MemoryAddScreen extends StatelessWidget {
   const MemoryAddScreen({Key? key}) : super(key: key);
@@ -25,7 +24,7 @@ class MemoryAddScreen extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.only(top: 20.0), // Apply padding only to the
 
-              child: MemoryForm(), // MemoryForm will now expand and take remaining space
+              child: Container(), // MemoryForm will now expand and take remaining space
             ),
           ),
         ],

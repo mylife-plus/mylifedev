@@ -1,5 +1,7 @@
+import 'package:flutter_contacts/contact.dart';
+import 'package:mapbox_maps_example/models/memoryWrapper.dart';
 import 'package:sqflite/sqflite.dart';
-import '../models/contact.dart';
+import '../models/contactModel.dart';
 import '../models/hashtag.dart';
 import '../models/memory.dart';
 import 'dbUtils.dart';
@@ -74,6 +76,20 @@ class MemoryRepository {
     return maps.map((m) => Hashtag.fromMap(m)).toList();
   }
 
+  Future<void> addMediaToMemory(int memoryId, List<String> mediaPath) async {
+
+    final db = await AppDatabase.instance.database;
+
+    //Clear existing relationships
+
+
+    for (var path in mediaPath){
+
+      await db.insert('MemoryMedia', {'memory_id':memoryId, 'media_path': path});
+    }
+
+  }
+
   /// Update all hashtags for a memory by removing old links and adding new ones
   Future<void> updateHashtagsForMemory(int memoryId, List<int> hashtagIds) async {
     final db = await AppDatabase.instance.database;
@@ -106,7 +122,7 @@ class MemoryRepository {
   }
 
   /// Fetch all contacts associated with a given memory
-  Future<List<Contact>> fetchContactsForMemory(int memoryId) async {
+  Future<List<ContactModel>> fetchContactsForMemory(int memoryId) async {
     final db = await AppDatabase.instance.database;
     final maps = await db.rawQuery('''
       SELECT Contacts.*
@@ -116,7 +132,7 @@ class MemoryRepository {
       WHERE MemoryContacts.memory_id = ?
     ''', [memoryId]);
 
-    return maps.map((m) => Contact.fromMap(m)).toList();
+    return maps.map((m) => ContactModel.fromMap(m)).toList();
   }
 
   /// Update all contacts for a memory by removing old links and adding new ones
@@ -128,5 +144,48 @@ class MemoryRepository {
     for (var id in contactIds) {
       await addContactToMemory(memoryId, id);
     }
+  }
+
+
+  Future<List<MemoryWrapper>>  getAllMemoriesWithMedia() async {
+
+    final db = await AppDatabase.instance.database;
+
+
+    List<Memory> memories =   await  fetchAllMemories();
+
+
+    List<MemoryWrapper> list =[];
+
+    for (Memory m in memories) {
+      var result = await db.query("MemoryMedia", where: 'memory_id = ?', whereArgs: [m.id]);
+      list.add(MemoryWrapper(memory: m, mediaPath: result.map((e)=>e["media_path"] as String).toList()));
+    }
+
+    list.forEach((e)=>print(e.toMap()));
+    return list;
+
+
+  }
+
+
+
+
+
+  Future<void> insertMemoryWithHashtagContactsMedia(Memory memory, List<Hashtag> hashtags, List<Contact> contactList,List<String> media) async {
+
+    int id = await insertMemory(memory);
+   await updateContactsForMemory(id, [...contactList.map((e)=>int.parse(e.id))]);
+
+    print("Contacts updated Successfuly");
+
+    await updateHashtagsForMemory(id, [...hashtags.map((e)=>e.id)]);
+
+    print("Hashtags updated successfully");
+
+    await addMediaToMemory(id, media);
+
+
+
   }
 }

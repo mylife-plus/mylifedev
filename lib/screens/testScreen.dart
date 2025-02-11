@@ -3,7 +3,6 @@ import 'package:intl/intl.dart';
 
 import 'package:flutter/material.dart';
 import 'package:mapbox_maps_example/models/memory.dart';
-import 'package:mapbox_maps_example/repository/contactsRepo.dart';
 import 'package:mapbox_maps_example/repository/memoryRepo.dart';
 
 import '../models/contact.dart';
@@ -82,7 +81,6 @@ class _TestScreenState extends State<TestScreen> {
 
                 }, child:Text("Add contact")),
                 ElevatedButton(onPressed: () async {
-                int result = await ContactRepository.instance.insertContact(mockContact);
 
                 }, child:Text("Get all contacts"))
               ],

@@ -3,8 +3,10 @@ import 'package:path/path.dart';
 
 class AppDatabase {
   AppDatabase._privateConstructor() {
+
     _dbFuture = _initDb();
   }
+
 
   static final AppDatabase instance = AppDatabase._privateConstructor();
 
@@ -13,13 +15,17 @@ class AppDatabase {
   Future<Database> get database => _dbFuture;
 
   Future<Database> _initDb() async {
+
     final dbPath = await getDatabasesPath();
-    final path = join(dbPath, 'my_database.db');
+
+    final path = join(dbPath, 'app.db');
+
 
     return await openDatabase(
       path,
       version: 1,
       onCreate: (db, version) async {
+
         // Memory table
         await db.execute('''
           CREATE TABLE Memory (
@@ -41,6 +47,8 @@ class AppDatabase {
           )
         ''');
 
+
+
         // MemoryMedia table
         await db.execute('''
           CREATE TABLE MemoryMedia (
@@ -55,18 +63,7 @@ class AppDatabase {
         await db.execute('''
           CREATE TABLE Contacts (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            firstName TEXT,
-            lastName TEXT,
-            imageUri TEXT,
-            phone TEXT,
-            email TEXT,
-            website TEXT,
-            instagram TEXT,
-            birthdate TEXT,
-            homeAddress TEXT,
-            profession TEXT,
-            businessAddress TEXT,
-            faith TEXT
+            metadata TEXT
           )
         ''');
 
@@ -77,6 +74,10 @@ class AppDatabase {
             name TEXT
           )
         ''');
+
+
+
+
 
         // Many-to-Many between Memory and Contacts
         await db.execute('''

@@ -1,85 +1,98 @@
+
+
+import 'package:flutter_contacts/contact.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
+import 'package:mapbox_maps_example/repository/dbUtils.dart';
 import 'package:sqflite/sqflite.dart';
 
-import '../models/contact.dart';
-import 'dbUtils.dart';
+import '../models/contactModel.dart';
 
 class ContactRepository {
   ContactRepository._privateConstructor();
   static final ContactRepository instance = ContactRepository._privateConstructor();
+final AppDatabase  dbUtils = AppDatabase.instance;
 
-  // Basic CRUD for Contacts
-  Future<int> insertContact(Contact contact) async {
-    final db = await AppDatabase.instance.database;
-    return db.insert('Contacts', contact.toMap());
+  Future<List<Contact>> syncContactsFromDevice() async {
+
+    final List<Contact> deviceContacts = await  FlutterContacts.getContacts(withAccounts: true,withGroups: true,withPhoto: true,withProperties: true,withThumbnail: true,deduplicateProperties: true,sorted: true);
+
+    //Handle DB Sync
+
+    for (var i in deviceContacts){
+      if (await readContact(i.id) == null){
+        await createContact(await ContactModel.create(id: i.id.toString()));
+      }
+      else {
+        print("Contact already synced");
+      }
+
+    }
+    return deviceContacts;
   }
 
-  Future<List<Contact>> fetchAllContacts() async {
-    final db = await AppDatabase.instance.database;
-    final maps = await db.query('Contacts');
-    return maps.map((m) => Contact.fromMap(m)).toList();
+
+
+  Future<ContactModel> createContact(ContactModel contact) async {
+    final db = await instance.dbUtils.database;
+
+    await db.insert(
+      'contacts',
+      contact.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+
+    return contact;
   }
 
-  Future<Contact?> fetchContactById(int id) async {
-    final db = await AppDatabase.instance.database;
-    final maps = await db.query('Contacts', where: 'id = ?', whereArgs: [id]);
-    if (maps.isEmpty) return null;
-    return Contact.fromMap(maps.first);
-  }
+  /// Read/Query a single ContactModel by its id.
+  Future<ContactModel?> readContact(String id) async {
+    final db = await instance.dbUtils.database;
 
-  Future<int> updateContact(Contact contact) async {
-    final db = await AppDatabase.instance.database;
-    return db.update('Contacts', contact.toMap(), where: 'id = ?', whereArgs: [contact.id]);
-  }
+    final maps = await db.query(
+      'contacts',
+      columns: ['id', 'metadata'],
+      where: 'id = ?',
+      whereArgs: [id],
+    );
 
-  Future<int> deleteContact(int id) async {
-    final db = await AppDatabase.instance.database;
-    // Remove group relationships before deleting the contact
-    await db.delete('ContactGroups', where: 'contact_id = ?', whereArgs: [id]);
-    return db.delete('Contacts', where: 'id = ?', whereArgs: [id]);
-  }
-
-  // -----------------------------------------------------------
-  // Methods to Handle Group Relationship (Many-to-Many)
-  // -----------------------------------------------------------
-
-  /// Link an existing group to a contact
-  Future<void> addGroupToContact(int contactId, int groupId) async {
-    final db = await AppDatabase.instance.database;
-    await db.insert('ContactGroups', {
-      'contact_id': contactId,
-      'group_id': groupId,
-    }, conflictAlgorithm: ConflictAlgorithm.ignore);
-  }
-
-  /// Remove a group from a contact
-  Future<void> removeGroupFromContact(int contactId, int groupId) async {
-    final db = await AppDatabase.instance.database;
-    await db.delete('ContactGroups',
-        where: 'contact_id = ? AND group_id = ?', whereArgs: [contactId, groupId]);
-  }
-
-  /// Update all groups for a contact by removing old links and adding new ones
-  Future<void> updateGroupsForContact(int contactId, List<int> groupIds) async {
-    final db = await AppDatabase.instance.database;
-    // Clear existing relationships
-    await db.delete('ContactGroups', where: 'contact_id = ?', whereArgs: [contactId]);
-    // Add new group links
-    for (var id in groupIds) {
-      await addGroupToContact(contactId, id);
+    if (maps.isNotEmpty) {
+      return ContactModel.fromMap(maps.first);
+    } else {
+      return null;
     }
   }
 
-  /// Fetch all contacts associated with a given group
-  Future<List<Contact>> fetchContactsForGroup(int groupId) async {
-    final db = await AppDatabase.instance.database;
-    final maps = await db.rawQuery('''
-      SELECT Contacts.*
-      FROM Contacts
-      INNER JOIN ContactGroups 
-      ON Contacts.id = ContactGroups.contact_id
-      WHERE ContactGroups.group_id = ?
-    ''', [groupId]);
+  /// Read/Query all contacts.
+  Future<List<ContactModel>> readAllContacts() async {
+    final db = await instance.dbUtils.database;
 
-    return maps.map((m) => Contact.fromMap(m)).toList();
+    final result = await db.query('contacts');
+
+    return result.map((map) => ContactModel.fromMap(map)).toList();
   }
+
+  /// Update an existing ContactModel record.
+  Future<int> updateContact(ContactModel contact) async {
+    final db = await instance.dbUtils.database;
+
+    return await db.update(
+      'contacts',
+      contact.toMap(),
+      where: 'id = ?',
+      whereArgs: [contact.id],
+    );
+  }
+
+  /// Delete a ContactModel record.
+  Future<int> deleteContact(String id) async {
+    final db = await instance.dbUtils.database;
+
+    return await db.delete(
+      'contacts',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+
 }
