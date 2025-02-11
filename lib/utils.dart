@@ -7,6 +7,13 @@ import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+
+String capitalize(String text){
+
+  return text[0].toUpperCase()+text.substring(1);
+
+}
+
 Future<List<double>> determinePosition() async {
 
 

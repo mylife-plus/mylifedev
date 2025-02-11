@@ -3,7 +3,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:mapbox_maps_example/providers/hashtagsProvider.dart';
 import 'package:mapbox_maps_example/providers/locationProvider.dart';
 import 'package:mapbox_maps_example/screens/contactsScreen.dart';
 import 'package:mapbox_maps_example/screens/mapScreen.dart';
@@ -41,6 +41,9 @@ class _HomepageState extends ConsumerState<Homepage>
   late MapboxMap map;
   late Uint8List pinImage;
   late  ByteData bytes ;
+  List<double> mapLocation=[0,0];
+
+
   @override
   void initState() {
 
@@ -53,8 +56,10 @@ class _HomepageState extends ConsumerState<Homepage>
 
   @override
   Widget build(BuildContext context) {
-
    final AsyncValue<List<double>> locationData =  ref.watch(locationGetterProvider);
+
+    var hashtags = ref.watch(hashtagNotifierProvider);
+
 
     return locationData.when(data: (location){
 
@@ -86,14 +91,26 @@ class _HomepageState extends ConsumerState<Homepage>
                               children: [
                                 MapScreen( onTapListener: (e) async {
 
+                                  ref.read(locationGetterProvider.notifier).changePosition([e.point.coordinates.lat.toDouble(),e.point.coordinates.lng.toDouble()]);
+
+
                         setState(() {
                         iconPosition = e.point;
+                        mapLocation = [e.point.coordinates.lat.toDouble(),e.point.coordinates.lng.toDouble()];
+
                         });
 
+                        print(e.point.coordinates.lat);
+                        print(iconPosition.coordinates.lat);
+                        print(mapLocation);
 
                         if(isLocationChoosingMode){
                           manager?.delete(annotation!);
+
                           annotation = await  manager?.create(PointAnnotationOptions(geometry: iconPosition, image: pinImage, iconSize: 0.2, iconOffset: [0,-100]));
+
+                          setState(() {
+                          });
 
                         }
 
@@ -142,7 +159,7 @@ class _HomepageState extends ConsumerState<Homepage>
                       ContactsScreen(),
                       SettingsScreen(),
                     ]),
-                floatingActionButton: !isLocationChoosingMode?FloatingActionButton(
+                floatingActionButton: !isLocationChoosingMode&&_tabController.index==0?FloatingActionButton(
                   backgroundColor: Colors.transparent,
                   elevation: 1,
                   child: Icon(
@@ -173,11 +190,11 @@ class _HomepageState extends ConsumerState<Homepage>
                   tabBuilder: (int i, bool isActive) {
                     return Padding(
                       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-                      child: SvgPicture.asset("assetName") //Image.asset(
-                       // tabs[i],
-                       // width: 36,
-                       // height: 36,
-                      //),
+                      child: Image.asset(
+                       tabs[i],
+                       width: 36,
+                       height: 36,
+                      ),
                     );
                   },
                   activeIndex: index,
@@ -199,7 +216,7 @@ class _HomepageState extends ConsumerState<Homepage>
                       });
                     },
                       locationCallback: _enterLocationSelectionMode,
-                      location: [location.first,location.last],)),
+                      location: [mapLocation.first,mapLocation.last], )),
               ),
             )
           ],

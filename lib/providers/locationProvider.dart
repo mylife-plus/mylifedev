@@ -9,6 +9,10 @@ class LocationGetter extends _$LocationGetter{
 FutureOr<List<double>> build() async {
   return  determinePosition();
 
+  }
 
+
+  Future<void> changePosition(List<double> newPosition) async {
+  state = AsyncValue.data(newPosition);
   }
 }

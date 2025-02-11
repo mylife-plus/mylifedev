@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../widgets/Memory_content.dart';
+import 'package:mapbox_maps_example/repository/memoryRepo.dart';
 
 class MemoryFeedScreen extends StatefulWidget {
   const MemoryFeedScreen({Key? key}) : super(key: key);
@@ -12,6 +12,9 @@ class MemoryFeedScreenState extends State<MemoryFeedScreen> with AutomaticKeepAl
 
   @override
   Widget build(BuildContext context) {
+
+    MemoryRepository memoryRepository = MemoryRepository.instance;
+
     super.build(context);
     return Container(
       decoration: BoxDecoration(
@@ -33,47 +36,23 @@ class MemoryFeedScreenState extends State<MemoryFeedScreen> with AutomaticKeepAl
           Container(
             color: Colors.white,
             margin: EdgeInsets.only(top: 20),
-            child: Column(
-              children: [
-                MemoryContent(
-                  date: "24/12/2024, 15:30",
-                  country: "Country Name",
-                  reactions: 3,
-                  content:
-                  "Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit ametLorem ipsum dolor sit amet Lorem ipsum dolor sit amet",
-                ),
-                const Divider(color: Colors.grey),
-                MemoryContent(
-                  date: "24/12/2024, 15:30",
-                  country: "Country Name",
-                  reactions: 3,
-                  content: "Lorem ipsum dolor sit amet...",
-                  imageUrls: [
-                    "https://cdn.builder.io/api/v1/image/assets/TEMP/7632e90dad2f4f0ca39a4830dbb1b01d72906e4c0ddc67d230681b967b7cc622?placeholderIfAbsent=true&apiKey=c43da3a161eb4f318c4f96480fdf0876",
-                    "https://cdn.builder.io/api/v1/image/assets/TEMP/7632e90dad2f4f0ca39a4830dbb1b01d72906e4c0ddc67d230681b967b7cc622?placeholderIfAbsent=true&apiKey=c43da3a161eb4f318c4f96480fdf0876",
+            child: FutureBuilder(
+              future: memoryRepository.getAllMemoriesWithMedia(),
+              builder: (BuildContext context, snapshot) {
+                if (snapshot.hasData){
+                return Column(
+                  children: [
+
+                    ...snapshot.data!.map((e)=>Text(e.memory.xCoordinate.toString()+"  "+e.memory.yCoordinate.toString()))
+
+
                   ],
-                ),
-                const Divider(color: Colors.grey),
-                MemoryContent(
-                  date: "24/12/2024, 15:30",
-                  country: "Country Name",
-                  reactions: 3,
-                  content:
-                  "Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit ametLorem ipsum dolor sit amet Lorem ipsum dolor sit amet",
-                  imageUrls: [
-                    "https://cdn.builder.io/api/v1/image/assets/TEMP/7632e90dad2f4f0ca39a4830dbb1b01d72906e4c0ddc67d230681b967b7cc622?placeholderIfAbsent=true&apiKey=c43da3a161eb4f318c4f96480fdf0876",
-                    "https://cdn.builder.io/api/v1/image/assets/TEMP/7632e90dad2f4f0ca39a4830dbb1b01d72906e4c0ddc67d230681b967b7cc622?placeholderIfAbsent=true&apiKey=c43da3a161eb4f318c4f96480fdf0876",
-                  ],
-                ),
-                const Divider(color: Colors.grey),
-                MemoryContent(
-                  date: "24/12/2024, 15:30",
-                  country: "Country Name",
-                  reactions: 3,
-                  content:
-                  "i am the test dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit ametLorem ipsum dolor sit amet Lorem ipsum dolor sit amet",
-                ),
-              ],
+                );}
+                else if (snapshot.hasError){
+                  return Text(snapshot.error.toString());
+                }
+                return CircularProgressIndicator();
+              }
             ),
           ),
         ],
