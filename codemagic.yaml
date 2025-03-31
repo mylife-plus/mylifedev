@@ -13,9 +13,6 @@ workflows:
         script: |
           flutter pub get
 
-      - name: update pod
-        script: |    
-          find . -name "Podfile" -execdir pod repo update \;
       - name: Install pods
         script: |
           find . -name "Podfile" -execdir pod install \;
