@@ -1,5 +1,6 @@
 # SpaceTimeMemory
 my diary app
+https://www.figma.com/design/csV3LzJedgEliUzx4pTfYa/mvp?node-id=0-1&t=G5hhC2fHWMAjKF37-1
 
 ## How we work 
 
