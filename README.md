@@ -25,3 +25,6 @@ https://www.figma.com/design/csV3LzJedgEliUzx4pTfYa/mvp?node-id=0-1&t=G5hhC2fHWM
 11. if the hunter fails to deliver in time the mana gets burned and the bounty gets reopened 
 12. once a bounty is finished the elected dev with role "Bounty Merger" checks and merges the bounty into main
 13. once merged the bounty mana including the locked mana gets automatically send to the hunter 
+
+#### Using Git Hooks to Trigger Blockchain Actions
+Git hooks are scripts that run automatically on specific Git events, such as committing (`post-commit`) or pushing (`post-push`). You can use these hooks to trigger interactions with Chromia’s blockchain.
